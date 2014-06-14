@@ -1,4 +1,1 @@
-HapticGlove
-===========
-
-Haptic Gloves!
+HAPTIC Gloves!
