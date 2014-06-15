@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 
 public class Magic : MonoBehaviour {
+	public WWW server;
+
 	enum MagicType {
 		Fire,
 		Ice
@@ -24,8 +26,10 @@ public class Magic : MonoBehaviour {
 	}
 	
 	// Use this for initialization
-	void Start () {
-		//instantiate fire object
+	IEnumerator Start () {
+		//instantiate server
+		server = new WWW ("http://ip.jsontest.com/");
+		yield return server;
 	}
 	
 	// Update is called once per frame
@@ -33,6 +37,7 @@ public class Magic : MonoBehaviour {
 		if (Input.GetKeyDown ("f")) {
 			CreateObject (MagicType.Fire);
 			//TODO: send signal for heat to server
+			//print (server.text);
 		}
 
 		if (Input.GetKeyDown ("g")) {
