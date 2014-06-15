@@ -49,7 +49,6 @@
      <Compile Include="Assets\LeapMotion\Editor\HandControllerEditor.cs" />
      <None Include="Assets\Models\Standard Assets\Glass Refraction (Pro Only)\Sources\Shaders\Glass-Stained-BumpDistort.shader" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-Basic.shader" />
-     <None Include="Assets\Models\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
      <None Include="Assets\LeapMotion\readme.txt" />
      <None Include="Assets\Models\Standard Assets\Water (Pro Only)\Water4\Sources\Shaders\FX-SimpleWater4.shader" />
      <None Include="Assets\Models\Standard Assets\Skyboxes\_skybox info.txt" />
@@ -77,6 +76,8 @@
  </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp.csproj">
+      <Project>{F9CB11DE-4973-88FC-BDC5-1B06DE228CCA}</Project>      <Name>Assembly-CSharp</Name>    </ProjectReference>
     <ProjectReference Include="Assembly-UnityScript.unityproj">
       <Project>{D0FA4662-758B-4F33-5CEF-990FFA1143E4}</Project>      <Name>Assembly-UnityScript</Name>    </ProjectReference>
   </ItemGroup>
