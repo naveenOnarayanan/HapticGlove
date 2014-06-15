@@ -54,6 +54,7 @@
      <None Include="Assets\Models\Standard Assets\Water (Pro Only)\Water4\Sources\Shaders\FX-SimpleWater4.shader" />
      <None Include="Assets\Models\Standard Assets\Skyboxes\_skybox info.txt" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-BasicOutline.shader" />
+     <None Include="Assets\Models\Elementals\!Readme.txt" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-LightedOutline.shader" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-Lighted.shader" />
      <None Include="Assets\Models\Standard Assets\Water (Pro Only)\Sources\Shaders\FX-Water.shader" />
@@ -76,8 +77,8 @@
  </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Assembly-CSharp.csproj">
-      <Project>{F9CB11DE-4973-88FC-BDC5-1B06DE228CCA}</Project>      <Name>Assembly-CSharp</Name>    </ProjectReference>
+    <ProjectReference Include="Assembly-UnityScript.unityproj">
+      <Project>{D0FA4662-758B-4F33-5CEF-990FFA1143E4}</Project>      <Name>Assembly-UnityScript</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

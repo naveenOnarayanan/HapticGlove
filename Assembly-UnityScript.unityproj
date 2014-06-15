@@ -59,6 +59,7 @@
      <None Include="Assets\Models\Standard Assets\Water (Pro Only)\Water4\Sources\Shaders\FX-SimpleWater4.shader" />
      <None Include="Assets\Models\Standard Assets\Skyboxes\_skybox info.txt" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-BasicOutline.shader" />
+     <None Include="Assets\Models\Elementals\!Readme.txt" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-LightedOutline.shader" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-Lighted.shader" />
      <None Include="Assets\Models\Standard Assets\Water (Pro Only)\Sources\Shaders\FX-Water.shader" />

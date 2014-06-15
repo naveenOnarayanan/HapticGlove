@@ -61,6 +61,8 @@
      <Compile Include="Assets\LeapMotion\Scripts\Utils\ConfidenceTransparency.cs" />
      <Compile Include="Assets\LeapMotion\Scripts\Utils\LeapUnityExtensions.cs" />
      <Compile Include="Assets\LeapMotion\Scripts\Utils\MagneticPinch.cs" />
+     <Compile Include="Assets\Models\Elementals\Scripts\OrbitCamera.cs" />
+     <Compile Include="Assets\Models\Elementals\Scripts\TestParticles.cs" />
      <Compile Include="Assets\Models\Standard Assets\Character Controllers\Sources\Scripts\MouseLook.cs" />
      <Compile Include="Assets\Models\Standard Assets\Water (Pro Only)\Sources\Scripts\Water.cs" />
      <Compile Include="Assets\Models\Standard Assets\Water (Pro Only)\Water4\Sources\Scripts\Displace.cs" />
@@ -78,6 +80,7 @@
      <None Include="Assets\Models\Standard Assets\Water (Pro Only)\Water4\Sources\Shaders\FX-SimpleWater4.shader" />
      <None Include="Assets\Models\Standard Assets\Skyboxes\_skybox info.txt" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-BasicOutline.shader" />
+     <None Include="Assets\Models\Elementals\!Readme.txt" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-LightedOutline.shader" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-Lighted.shader" />
      <None Include="Assets\Models\Standard Assets\Water (Pro Only)\Sources\Shaders\FX-Water.shader" />

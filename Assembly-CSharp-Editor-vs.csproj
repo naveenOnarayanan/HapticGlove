@@ -54,11 +54,15 @@
      <None Include="Assets\Models\Standard Assets\Water (Pro Only)\Water4\Sources\Shaders\FX-SimpleWater4.shader" />
      <None Include="Assets\Models\Standard Assets\Skyboxes\_skybox info.txt" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-BasicOutline.shader" />
+     <None Include="Assets\Models\Elementals\!Readme.txt" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-LightedOutline.shader" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-Lighted.shader" />
      <None Include="Assets\Models\Standard Assets\Water (Pro Only)\Sources\Shaders\FX-Water.shader" />
      <None Include="Assets\Models\Standard Assets\Water (Pro Only)\Water4\Sources\Shaders\WaterInclude.cginc" />
      <None Include="Assets\Models\Standard Assets\Water (Pro Only)\Water4\Sources\Shaders\FX-Water4.shader" />
+ <Reference Include="Library\ScriptAssemblies\Assembly-UnityScript">
+ <HintPath>Library\ScriptAssemblies\Assembly-UnityScript.dll</HintPath>
+ </Reference>
  <Reference Include="Assets\Plugins\LeapCSharp.NET3.5">
  <HintPath>Assets\Plugins\LeapCSharp.NET3.5.dll</HintPath>
  </Reference>
@@ -74,10 +78,6 @@
  <Reference Include="\Applications\Unity\Unity.app\Contents\PlaybackEngines\AndroidPlayer\EditorExtensions\UnityEditor.Android.Extensions">
  <HintPath>\Applications\Unity\Unity.app\Contents\PlaybackEngines\AndroidPlayer\EditorExtensions\UnityEditor.Android.Extensions.dll</HintPath>
  </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="Assembly-CSharp-vs.csproj">
-      <Project>{F9CB11DE-4973-88FC-BDC5-1B06DE228CCA}</Project>      <Name>Assembly-CSharp-vs</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
