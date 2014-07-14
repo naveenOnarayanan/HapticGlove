@@ -23,6 +23,7 @@ public class RigidHand : SkeletalHand {
   }
 
   public override void UpdateHand() {
+
     for (int f = 0; f < fingers.Length; ++f) {
       if (fingers[f] != null)
         fingers[f].UpdateFinger();
