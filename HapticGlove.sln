@@ -1,6 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2008
 
+Project("{73935D1F-CB4C-0DB6-D257-1D2E182B43BF}") = "HapticGlove", "Assembly-CSharp-firstpass.csproj", "{EE168D09-B50A-EA09-44C7-E1E95AC68915}"
+EndProject
 Project("{73935D1F-CB4C-0DB6-D257-1D2E182B43BF}") = "HapticGlove", "Assembly-CSharp.csproj", "{F9CB11DE-4973-88FC-BDC5-1B06DE228CCA}"
 EndProject
 Project("{73935D1F-CB4C-0DB6-D257-1D2E182B43BF}") = "HapticGlove", "Assembly-CSharp-Editor.csproj", "{5F7DA2FD-6DEB-10F6-F801-822CB375541C}"
@@ -13,6 +15,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EE168D09-B50A-EA09-44C7-E1E95AC68915}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE168D09-B50A-EA09-44C7-E1E95AC68915}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE168D09-B50A-EA09-44C7-E1E95AC68915}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE168D09-B50A-EA09-44C7-E1E95AC68915}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F9CB11DE-4973-88FC-BDC5-1B06DE228CCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F9CB11DE-4973-88FC-BDC5-1B06DE228CCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9CB11DE-4973-88FC-BDC5-1B06DE228CCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -29,7 +35,7 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-					GlobalSection(MonoDevelopProperties) = preSolution
+							GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
