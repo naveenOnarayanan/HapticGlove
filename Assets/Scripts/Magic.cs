@@ -20,12 +20,19 @@ public class Magic : MonoBehaviour {
     Controller controller;
   	Hand mainHand;
 
-  	int counter = 0;
+  	int chargeCounter = 0;
+    int cooldownCounter = 0;
+
+    int SHORT_THRESHOLD = 100;
+    int MEDIUM_THRESHOLD = 200;
+    int LONG_THRESHOLD = 300;
+    int COOLDOWN_THRESHOLD = 500;
 
   	GameObject obj;
   	MagicType lastCall;
     bool fireballCharged = false;
-    bool cooldown = false;
+    //TODO: change this to true
+    bool connected = false;
 
   	enum MagicType {
   		FireSmall,
@@ -58,7 +65,6 @@ public class Magic : MonoBehaviour {
                     break;
       					case MagicType.Fireball:
                     // TODO: Need to get the fireball to be shot where the user is facing
-                    Debug.Log (Camera.main.transform.rotation);
                     obj = (GameObject)Instantiate(Resources.Load ("Fireball"), vector, Camera.main.transform.rotation);	
         						break;
       					default:
@@ -75,12 +81,21 @@ public class Magic : MonoBehaviour {
     }
 
     void sendData(string data, IPEndPoint server) {
+        if (!connected)
+            return;
+
         //TODO: process data as json
         Int32 timestamp = (Int32)(DateTime.UtcNow.Subtract (new DateTime (1970, 1, 1))).TotalSeconds;
         string json = "{\"timestamp\":" + timestamp + ", " + data + "}";
         byte[] d = Encoding.UTF8.GetBytes (json);
 
         client.SendTo (d, d.Length, SocketFlags.None, server);
+    }
+
+    void neutralize() {
+        fireballCharged = false;
+        chargeCounter = 0;
+        sendData("\"temperature\": 0", peltierServer);
     }
     
   	// Use this for initialization
@@ -96,6 +111,14 @@ public class Magic : MonoBehaviour {
         servoServer = new IPEndPoint (IPAddress.Parse (IP), servoPort);
         peltierServer = new IPEndPoint (IPAddress.Parse (IP), peltierPort);
         client = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+        try {
+            //TODO: this doesn't work for UDP, how do a check if connected?
+            //client.Connect (servoServer);
+            //client.Connect (peltierServer);
+        } catch {
+            connected = false;
+        }
   	}
   	
   	// Update is called once per frame
@@ -122,15 +145,27 @@ public class Magic : MonoBehaviour {
             gesture = gestures.Type;
             break;
         }
-        
+
+        //cooldown mode, don't let it do anything else
+        if (cooldownCounter > 0 && cooldownCounter < COOLDOWN_THRESHOLD) {
+            //pull fingers taught
+            sendData ("\"temperature\": 0", peltierServer);
+            sendData ("\"angle\": 180", servoServer);
+
+            cooldownCounter++;
+        } else if (cooldownCounter == COOLDOWN_THRESHOLD) {
+            //release fingers
+            sendData ("\"angle\": 0", servoServer);
+
+            Debug.Log ("Done cooldown");
+            cooldownCounter = 0;
         // Metrics to detect if hand is face-up with fingers open (indicates if hand can charge fireball)
-    		if (mainHand.Direction.y > 0.5 && mainHand.PalmNormal.y < 0 && mainHand.PalmNormal.z < 0 && fingerFlat) {
-            //Debug.Log (counter);
-            if (counter <= 600 && !cooldown) {
+        } else if (mainHand.Direction.y > 0.5 && mainHand.PalmNormal.y < 0 && mainHand.PalmNormal.z < 0 && fingerFlat) {
+            if (chargeCounter <= LONG_THRESHOLD) {
                 // Counts for 200 frames before switching to larger flame
-                if (counter > 200 && counter <= 400) {
+                if (chargeCounter > SHORT_THRESHOLD && chargeCounter <= MEDIUM_THRESHOLD) {
                     CreateObject(MagicType.FireMedium);
-                } else if (counter > 400) {
+                } else if (chargeCounter > MEDIUM_THRESHOLD) {
                     CreateObject(MagicType.FireLarge);
                 } else {
                     CreateObject (MagicType.FireSmall);
@@ -139,37 +174,28 @@ public class Magic : MonoBehaviour {
                 fireballCharged = true;
                 //TODO: differentiate hotness when we have that established
                 sendData("\"temperature\": 10", peltierServer);
-                counter++;
-            } else if (fireballCharged) {
-                //TODO: not working as expected. Delay not waiting, and still spamming fire
+                chargeCounter++;
+            //overloaded, go into cooldown
+            } else {
                 Debug.Log ("Charged too long, in cooldown mode");
                 Destroy (obj.gameObject); 
-                fireballCharged = false;
-                cooldown = true;
 
-                sendData("\"temperature\": 0", peltierServer);
-                sendData ("\"angle\": 180", servoServer);
-                Delay (5);
-                sendData ("\"angle\": 0", servoServer);
-                Debug.Log ("Done cooldown");
-                cooldown = false;
+                neutralize();
+                cooldownCounter++;
             }
+        //shoot fireball
         } else if (gesture == Gesture.GestureType.TYPE_CIRCLE && fireballCharged) {
-            // TODO: need to add logic such that if the fireball was not shot within X amount of time then
-            // fireball will not be released
             CreateObject (MagicType.Fireball);
-            fireballCharged = false;
-            sendData("\"temperature\": 0", peltierServer);
-        } else {
-            if (lastCall == MagicType.Fireball) {
-                Debug.Log ("Destroying since it is not fireball");
-                Delay (10);
-            }
 
+            neutralize();
+
+        //not doing a gesture, cancel charges
+        } else {
             if (obj != null && lastCall != MagicType.Fireball) {
                 Destroy (obj.gameObject); 
             }
-            counter = 0;
+
+            neutralize();
         }
   	}
 }
