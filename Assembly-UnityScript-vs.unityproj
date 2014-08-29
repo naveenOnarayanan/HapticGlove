@@ -46,6 +46,19 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\BaseMale\Scripts\GUI\buttonAnimationPause.js" />
+     <Compile Include="Assets\BaseMale\Scripts\GUI\buttonClickFlash.js" />
+     <Compile Include="Assets\BaseMale\Scripts\GUI\buttonHoverSetText.js" />
+     <Compile Include="Assets\BaseMale\Scripts\GUI\buttonPicker.js" />
+     <Compile Include="Assets\BaseMale\Scripts\GUI\buttonPosition.js" />
+     <Compile Include="Assets\BaseMale\Scripts\GUI\buttonSetAnimation.js" />
+     <Compile Include="Assets\BaseMale\Scripts\GUI\buttonSetMaterial.js" />
+     <Compile Include="Assets\BaseMale\Scripts\GUI\buttonSize.js" />
+     <Compile Include="Assets\BaseMale\Scripts\GUI\buttonSwitchTexture.js" />
+     <Compile Include="Assets\BaseMale\Scripts\cameraViewObject.js" />
+     <Compile Include="Assets\BaseMale\Scripts\clearText.js" />
+     <Compile Include="Assets\BaseMale\Scripts\infoText.js" />
+     <Compile Include="Assets\BaseMale\Scripts\shadow.js" />
      <Compile Include="Assets\Models\Standard Assets\Character Controllers\Sources\Scripts\CharacterMotor.js" />
      <Compile Include="Assets\Models\Standard Assets\Character Controllers\Sources\Scripts\FPSInputController.js" />
      <Compile Include="Assets\Models\Standard Assets\Character Controllers\Sources\Scripts\PlatformInputController.js" />

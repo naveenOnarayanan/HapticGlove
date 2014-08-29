@@ -66,6 +66,9 @@ public class Magic : MonoBehaviour {
       					case MagicType.Fireball:
                     // TODO: Need to get the fireball to be shot where the user is facing
                     obj = (GameObject)Instantiate(Resources.Load ("Fireball"), vector, Camera.main.transform.rotation);	
+                    //obj.AddComponent<Rigidbody>();
+                    //obj.rigidbody.useGravity = false;
+                    obj.AddComponent<BoxCollider>();
         						break;
       					default:
         						obj = (GameObject)Instantiate (Resources.Load ("Stream"));
@@ -185,6 +188,7 @@ public class Magic : MonoBehaviour {
             }
         //shoot fireball
         } else if (gesture == Gesture.GestureType.TYPE_CIRCLE && fireballCharged) {
+            //TODO: change fireball based on chargedness
             CreateObject (MagicType.Fireball);
 
             neutralize();
