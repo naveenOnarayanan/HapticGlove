@@ -16,6 +16,7 @@ public class Magic : MonoBehaviour {
   	int chargeCounter = 0;
     int cooldownCounter = 0;
 
+    int MIN_THRESHOLD = 20;
     int SHORT_THRESHOLD = 200;
     int MEDIUM_THRESHOLD = 400;
     int LONG_THRESHOLD = 600;
@@ -143,8 +144,8 @@ public class Magic : MonoBehaviour {
             neutralize();
         //charging
         } else if (MagicHelper.handFaceUp(mainHand, controller.Frame()) && canCharge) {
+            Debug.Log ("up" + chargeCounter);
             if (chargeCounter <= LONG_THRESHOLD) {
-                Debug.Log (chargeCounter);
                 if (chargeCounter > SHORT_THRESHOLD && chargeCounter <= MEDIUM_THRESHOLD) {
                     CreateObject(canCall, Size.Medium);
                 } else if (chargeCounter > MEDIUM_THRESHOLD) {
@@ -164,8 +165,9 @@ public class Magic : MonoBehaviour {
                 neutralize();
                 cooldownCounter++;
             }
-        //shoot fireball
-        } else if (MagicHelper.handFaceForward(mainHand, controller.Frame()) && chargeCounter > 0) {
+        //shoot charged object
+        } else if (MagicHelper.handFaceForward(mainHand, controller.Frame()) && chargeCounter > MIN_THRESHOLD) {
+            Debug.Log (chargeCounter);
             if (canCall == MagicType.FireCharge) {
                 //TODO: change fireball based on chargedness
                 CreateObject (MagicType.Fireball);
