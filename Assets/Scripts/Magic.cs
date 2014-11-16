@@ -16,26 +16,30 @@ public class Magic : MonoBehaviour {
   	int chargeCounter = 0;
     int cooldownCounter = 0;
 
-    int SHORT_THRESHOLD = 100;
-    int MEDIUM_THRESHOLD = 200;
-    int LONG_THRESHOLD = 300;
+    int SHORT_THRESHOLD = 200;
+    int MEDIUM_THRESHOLD = 400;
+    int LONG_THRESHOLD = 600;
     int COOLDOWN_THRESHOLD = 500;
 
   	GameObject obj;
   	MagicType lastCall;
 
-    bool fireballCharged = false;
     bool canCharge = false;
+    MagicType canCall;
 
   	enum MagicType {
-  		FireSmall,
-  		FireMedium,
-  		FireLarge,
+  		FireCharge,
   		Fireball,
-  		Ice
+  		IceCharge
   	};
 
-  	void CreateObject(MagicType type) {
+    enum Size {
+        Small,
+        Medium,
+        Large
+    }
+
+  	void CreateObject(MagicType type, Size size = Size.Small) {
     		Vector3 vector = transform.TransformPoint (mainHand.PalmPosition.ToUnityScaled ());
     		if (obj != null && type == lastCall) {
       			obj.transform.position = transform.TransformPoint (mainHand.PalmPosition.ToUnityScaled ());
@@ -47,34 +51,51 @@ public class Magic : MonoBehaviour {
                 Destroy(obj);
             }
     				switch (type) {
-      					case MagicType.FireSmall:
-                    obj = (GameObject)Instantiate (Resources.Load ("Fire_01"), vector, transform.rotation);
-        						break;
-      					case MagicType.FireMedium:
-                    obj = (GameObject)Instantiate (Resources.Load ("Fire_02"), vector, transform.rotation);
-        						break;
-                case MagicType.FireLarge:
-                    obj = (GameObject) Instantiate (Resources.Load ("Fire_03"), vector, transform.rotation);
+                case MagicType.FireCharge:
+                    switch (size) {
+                      case Size.Small:
+                          obj = (GameObject)Instantiate (Resources.Load ("Fire_01"), vector, transform.rotation);
+                          break;
+                      case Size.Medium:
+                          obj = (GameObject)Instantiate (Resources.Load ("Fire_02"), vector, transform.rotation);
+                          break;
+                      case Size.Large:
+                          obj = (GameObject) Instantiate (Resources.Load ("Fire_03"), vector, transform.rotation);
+                          break;
+                    }
                     break;
-      					case MagicType.Fireball:
+                //TODO: differentiate difference ices
+                case MagicType.IceCharge:
+                    switch (size) {
+                    case Size.Small:
+                        obj = (GameObject)Instantiate (Resources.Load ("Stream"));
+                        break;
+                    case Size.Medium:
+                        obj = (GameObject)Instantiate (Resources.Load ("Stream"));
+                        break;
+                    case Size.Large:
+                        obj = (GameObject)Instantiate (Resources.Load ("Stream"));
+                        break;
+                    }
+                    break;
+                case MagicType.Fireball:
                     // TODO: Need to get the fireball to be shot where the user is facing
-                    obj = (GameObject)Instantiate(Resources.Load ("Fireball"), vector, Camera.main.transform.rotation);	
+                    obj = (GameObject)Instantiate(Resources.Load ("Fireball"), vector, Camera.main.transform.rotation); 
                     //obj.AddComponent<Rigidbody>();
                     //obj.rigidbody.useGravity = false;
                     obj.AddComponent<BoxCollider>();
-        						break;
-      					default:
-        						obj = (GameObject)Instantiate (Resources.Load ("Stream"));
-        						break;
-    				}
+                    break;
+                default:
+                    break;
+        				}
     		}
 
   		  lastCall = type;
   	}
 
     void neutralize() {
-        fireballCharged = false;
         chargeCounter = 0;
+        canCharge = false;
         nc.sendData("\"temperature\": 0", PELTIER);
     }
     
@@ -91,40 +112,47 @@ public class Magic : MonoBehaviour {
   	void Update () {
     		mainHand = controller.Frame().Hands[0];
 
-    		//Debug.Log (mainHand.Direction + ":" + mainHand.PalmNormal);
+        //Debug.Log (MagicHelper.handFaceForward(mainHand, controller.Frame()) + " " + mainHand.Direction + ":" + mainHand.PalmNormal);
 
-        Gesture.GestureType gesture = Gesture.GestureType.TYPE_INVALID;
-
-        foreach (Gesture gestures in controller.Frame().Gestures ()) {
-            gesture = gestures.Type;
-            break;
+        //TODO: gestures within last X frames
+        foreach (Gesture gesture in controller.Frame().Gestures ()) {
+            if (gesture.Type == Gesture.GestureType.TYPE_CIRCLE) {
+                canCharge = true;
+                canCall = MagicType.FireCharge;
+            } else if (gesture.Type == Gesture.GestureType.TYPE_SWIPE) {
+                canCharge = true;
+                canCall = MagicType.IceCharge;
+            }
         }
 
         //cooldown mode, don't let it do anything else
         if (cooldownCounter > 0 && cooldownCounter < COOLDOWN_THRESHOLD) {
             //pull fingers taught
-            nc.sendData ("\"temperature\": 0", PELTIER);
             nc.sendData ("\"angle\": 180", SERVO);
 
             cooldownCounter++;
+
+            neutralize();
         } else if (cooldownCounter == COOLDOWN_THRESHOLD) {
             //release fingers
             nc.sendData ("\"angle\": 0", SERVO);
 
             Debug.Log ("Done cooldown");
             cooldownCounter = 0;
+
+            neutralize();
         //charging
-        } else if (MagicHelper.handFaceUp(mainHand, controller.Frame ())) {
+        } else if (MagicHelper.handFaceUp(mainHand, controller.Frame()) && canCharge) {
             if (chargeCounter <= LONG_THRESHOLD) {
+                Debug.Log (chargeCounter);
                 if (chargeCounter > SHORT_THRESHOLD && chargeCounter <= MEDIUM_THRESHOLD) {
-                    CreateObject(MagicType.FireMedium);
+                    CreateObject(canCall, Size.Medium);
                 } else if (chargeCounter > MEDIUM_THRESHOLD) {
-                    CreateObject(MagicType.FireLarge);
+                    CreateObject(canCall, Size.Large);
                 } else {
-                    CreateObject (MagicType.FireSmall);
+                    CreateObject(canCall, Size.Small);
                 }
 
-                fireballCharged = true;
                 //TODO: differentiate hotness when we have that established
                 nc.sendData("\"temperature\": 10", PELTIER);
                 chargeCounter++;
@@ -137,10 +165,14 @@ public class Magic : MonoBehaviour {
                 cooldownCounter++;
             }
         //shoot fireball
-        //TODO: do when hand's facing forward
-        } else if (gesture == Gesture.GestureType.TYPE_CIRCLE && fireballCharged) {
-            //TODO: change fireball based on chargedness
-            CreateObject (MagicType.Fireball);
+        } else if (MagicHelper.handFaceForward(mainHand, controller.Frame()) && chargeCounter > 0) {
+            if (canCall == MagicType.FireCharge) {
+                //TODO: change fireball based on chargedness
+                CreateObject (MagicType.Fireball);
+            } else {
+                //TODO: change this to ice
+                CreateObject (MagicType.Fireball);
+            }
 
             neutralize();
 
@@ -149,8 +181,6 @@ public class Magic : MonoBehaviour {
             if (obj != null && lastCall != MagicType.Fireball) {
                 Destroy (obj.gameObject); 
             }
-
-            neutralize();
         }
   	}
 }

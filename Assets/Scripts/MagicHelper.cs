@@ -18,4 +18,8 @@ public static class MagicHelper {
         
         return mainHand.Direction.y > 0.5 && mainHand.PalmNormal.y < 0 && mainHand.PalmNormal.z < 0 && fingerFlat;
     }
+
+    public static bool handFaceForward(Hand mainHand, Frame frame) {
+        return mainHand.PalmNormal.y > 0.8 && mainHand.PalmNormal.z > 0.1 && mainHand.PalmNormal.z < 0.5;
+    }
 }
