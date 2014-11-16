@@ -123,28 +123,30 @@ public class Magic : MonoBehaviour {
             connected = false;
         }
   	}
+
+    Boolean handFaceUp(Frame frame) {
+        Pointable finger;
+        bool fingerFlat = true;
+        
+        //Debug.Log (transform.TransformPoint(mainHand.PalmPosition.ToUnityScaled()));
+        
+        for (int i = 0; i < frame.Pointables.Count; i++) {
+            finger = frame.Pointables[i];
+            fingerFlat &= finger.Direction.y > 0;
+        }
+
+        return mainHand.Direction.y > 0.5 && mainHand.PalmNormal.y < 0 && mainHand.PalmNormal.z < 0 && fingerFlat;
+    }
   	
   	// Update is called once per frame
   	void Update () {
-  		  Frame frame = controller.Frame ();
     		mainHand = controller.Frame().Hands[0];
 
     		//Debug.Log (mainHand.Direction + ":" + mainHand.PalmNormal);
 
-    		Pointable finger;
-    		bool fingerFlat = true;
-
-    		//Debug.Log (transform.TransformPoint(mainHand.PalmPosition.ToUnityScaled()));
-
-    		for (int i = 0; i < controller.Frame().Pointables.Count; i++) {
-      			finger = controller.Frame ().Pointables[i];
-      			fingerFlat &= finger.Direction.y > 0;
-    		}
-        
-        
         Gesture.GestureType gesture = Gesture.GestureType.TYPE_INVALID;
 
-        foreach (Gesture gestures in frame.Gestures ()) {
+        foreach (Gesture gestures in controller.Frame().Gestures ()) {
             gesture = gestures.Type;
             break;
         }
@@ -162,10 +164,9 @@ public class Magic : MonoBehaviour {
 
             Debug.Log ("Done cooldown");
             cooldownCounter = 0;
-        // Metrics to detect if hand is face-up with fingers open (indicates if hand can charge fireball)
-        } else if (mainHand.Direction.y > 0.5 && mainHand.PalmNormal.y < 0 && mainHand.PalmNormal.z < 0 && fingerFlat) {
+        // charging
+        } else if (handFaceUp(controller.Frame ())) {
             if (chargeCounter <= LONG_THRESHOLD) {
-                // Counts for 200 frames before switching to larger flame
                 if (chargeCounter > SHORT_THRESHOLD && chargeCounter <= MEDIUM_THRESHOLD) {
                     CreateObject(MagicType.FireMedium);
                 } else if (chargeCounter > MEDIUM_THRESHOLD) {
