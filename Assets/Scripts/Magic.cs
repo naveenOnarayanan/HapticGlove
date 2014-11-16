@@ -2,21 +2,14 @@ using Leap;
 using SimpleJSON;
 using System;
 using System.Collections;
-using System.Net;
-using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using UnityEngine;
 
 public class Magic : MonoBehaviour {
-    public Socket client;
-    IPEndPoint servoServer;
-    IPEndPoint peltierServer;
-    
-    public int servoPort;
-    public int peltierPort;
-    public string IP;
-  	
+    NetworkController nc;
+    string PELTIER = "peltier";
+    string SERVO = "servo";
+
     Controller controller;
   	Hand mainHand;
 
@@ -30,9 +23,9 @@ public class Magic : MonoBehaviour {
 
   	GameObject obj;
   	MagicType lastCall;
+
     bool fireballCharged = false;
-    //TODO: change this to true
-    bool connected = false;
+    bool canCharge = false;
 
   	enum MagicType {
   		FireSmall,
@@ -78,27 +71,11 @@ public class Magic : MonoBehaviour {
 
   		  lastCall = type;
   	}
-  	
-    IEnumerator Delay(int seconds) {
-        yield return new WaitForSeconds (seconds);
-    }
-
-    void sendData(string data, IPEndPoint server) {
-        if (!connected)
-            return;
-
-        //TODO: process data as json
-        Int32 timestamp = (Int32)(DateTime.UtcNow.Subtract (new DateTime (1970, 1, 1))).TotalSeconds;
-        string json = "{\"timestamp\":" + timestamp + ", " + data + "}";
-        byte[] d = Encoding.UTF8.GetBytes (json);
-
-        client.SendTo (d, d.Length, SocketFlags.None, server);
-    }
 
     void neutralize() {
         fireballCharged = false;
         chargeCounter = 0;
-        sendData("\"temperature\": 0", peltierServer);
+        nc.sendData("\"temperature\": 0", PELTIER);
     }
     
   	// Use this for initialization
@@ -106,37 +83,9 @@ public class Magic : MonoBehaviour {
     		controller = new Controller ();
     		controller.EnableGesture (Gesture.GestureType.TYPE_CIRCLE);
     		controller.EnableGesture (Gesture.GestureType.TYPE_SWIPE);
-        
-    		//instantiate server
-        IP = "169.254.191.81";
-        servoPort = 3000;
-        peltierPort = 3001;
-        servoServer = new IPEndPoint (IPAddress.Parse (IP), servoPort);
-        peltierServer = new IPEndPoint (IPAddress.Parse (IP), peltierPort);
-        client = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-        try {
-            //TODO: this doesn't work for UDP, how do a check if connected?
-            //client.Connect (servoServer);
-            //client.Connect (peltierServer);
-        } catch {
-            connected = false;
-        }
+        nc = new NetworkController();
   	}
-
-    Boolean handFaceUp(Frame frame) {
-        Pointable finger;
-        bool fingerFlat = true;
-        
-        //Debug.Log (transform.TransformPoint(mainHand.PalmPosition.ToUnityScaled()));
-        
-        for (int i = 0; i < frame.Pointables.Count; i++) {
-            finger = frame.Pointables[i];
-            fingerFlat &= finger.Direction.y > 0;
-        }
-
-        return mainHand.Direction.y > 0.5 && mainHand.PalmNormal.y < 0 && mainHand.PalmNormal.z < 0 && fingerFlat;
-    }
   	
   	// Update is called once per frame
   	void Update () {
@@ -154,18 +103,18 @@ public class Magic : MonoBehaviour {
         //cooldown mode, don't let it do anything else
         if (cooldownCounter > 0 && cooldownCounter < COOLDOWN_THRESHOLD) {
             //pull fingers taught
-            sendData ("\"temperature\": 0", peltierServer);
-            sendData ("\"angle\": 180", servoServer);
+            nc.sendData ("\"temperature\": 0", PELTIER);
+            nc.sendData ("\"angle\": 180", SERVO);
 
             cooldownCounter++;
         } else if (cooldownCounter == COOLDOWN_THRESHOLD) {
             //release fingers
-            sendData ("\"angle\": 0", servoServer);
+            nc.sendData ("\"angle\": 0", SERVO);
 
             Debug.Log ("Done cooldown");
             cooldownCounter = 0;
-        // charging
-        } else if (handFaceUp(controller.Frame ())) {
+        //charging
+        } else if (MagicHelper.handFaceUp(mainHand, controller.Frame ())) {
             if (chargeCounter <= LONG_THRESHOLD) {
                 if (chargeCounter > SHORT_THRESHOLD && chargeCounter <= MEDIUM_THRESHOLD) {
                     CreateObject(MagicType.FireMedium);
@@ -177,7 +126,7 @@ public class Magic : MonoBehaviour {
 
                 fireballCharged = true;
                 //TODO: differentiate hotness when we have that established
-                sendData("\"temperature\": 10", peltierServer);
+                nc.sendData("\"temperature\": 10", PELTIER);
                 chargeCounter++;
             //overloaded, go into cooldown
             } else {
@@ -188,6 +137,7 @@ public class Magic : MonoBehaviour {
                 cooldownCounter++;
             }
         //shoot fireball
+        //TODO: do when hand's facing forward
         } else if (gesture == Gesture.GestureType.TYPE_CIRCLE && fireballCharged) {
             //TODO: change fireball based on chargedness
             CreateObject (MagicType.Fireball);

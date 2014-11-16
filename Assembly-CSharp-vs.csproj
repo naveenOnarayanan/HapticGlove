@@ -74,6 +74,8 @@
      <Compile Include="Assets\Models\Standard Assets\Water (Pro Only)\Water4\Sources\Scripts\WaterTile.cs" />
      <Compile Include="Assets\Scripts\HandMagic.cs" />
      <Compile Include="Assets\Scripts\Magic.cs" />
+     <Compile Include="Assets\Scripts\MagicHelper.cs" />
+     <Compile Include="Assets\Scripts\NetworkController.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
      <None Include="Assets\Models\Standard Assets\Glass Refraction (Pro Only)\Sources\Shaders\Glass-Stained-BumpDistort.shader" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-Basic.shader" />
