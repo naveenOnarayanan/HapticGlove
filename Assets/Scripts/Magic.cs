@@ -95,6 +95,7 @@ public class Magic : MonoBehaviour {
   	}
 
     void neutralize() {
+        obj = null;
         chargeCounter = 0;
         canCharge = false;
         nc.sendData("\"temperature\": 0", PELTIER);
@@ -115,8 +116,9 @@ public class Magic : MonoBehaviour {
 
         //Debug.Log (MagicHelper.handFaceForward(mainHand, controller.Frame()) + " " + mainHand.Direction + ":" + mainHand.PalmNormal);
 
-        //TODO: gestures within last X frames
-        foreach (Gesture gesture in controller.Frame().Gestures ()) {
+        //gestures within last 10 frames
+
+        foreach (Gesture gesture in controller.Frame().Gestures(controller.Frame(10))) {
             if (gesture.Type == Gesture.GestureType.TYPE_CIRCLE) {
                 canCharge = true;
                 canCall = MagicType.FireCharge;
@@ -144,7 +146,6 @@ public class Magic : MonoBehaviour {
             neutralize();
         //charging
         } else if (MagicHelper.handFaceUp(mainHand, controller.Frame()) && canCharge) {
-            Debug.Log ("up" + chargeCounter);
             if (chargeCounter <= LONG_THRESHOLD) {
                 if (chargeCounter > SHORT_THRESHOLD && chargeCounter <= MEDIUM_THRESHOLD) {
                     CreateObject(canCall, Size.Medium);
@@ -167,7 +168,6 @@ public class Magic : MonoBehaviour {
             }
         //shoot charged object
         } else if (MagicHelper.handFaceForward(mainHand, controller.Frame()) && chargeCounter > MIN_THRESHOLD) {
-            Debug.Log (chargeCounter);
             if (canCall == MagicType.FireCharge) {
                 //TODO: change fireball based on chargedness
                 CreateObject (MagicType.Fireball);
@@ -183,6 +183,8 @@ public class Magic : MonoBehaviour {
             if (obj != null && lastCall != MagicType.Fireball) {
                 Destroy (obj.gameObject); 
             }
+
+            canCharge = false;
         }
   	}
 }
