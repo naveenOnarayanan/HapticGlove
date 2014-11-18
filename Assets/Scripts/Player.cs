@@ -19,6 +19,11 @@ public class Player : MonoBehaviour {
       }
 	}
 
+  void onCollisionEnter(GameObject collision) {
+        Debug.Log ("Collision has occured" + collision.name);
+        DestroyObject (collision);
+    }
+
   void OnParticleCollision(GameObject collision){
       Debug.Log (collision.name);
 
