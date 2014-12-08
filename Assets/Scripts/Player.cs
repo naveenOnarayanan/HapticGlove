@@ -16,20 +16,14 @@ public class Player : MonoBehaviour {
       if (health <= 0) {
             Debug.Log ("game over");
             //TODO: end game
+
       }
 	}
 
-  void onCollisionEnter(GameObject collision) {
-        Debug.Log ("Collision has occured" + collision.name);
-        DestroyObject (collision);
-    }
-
   void OnParticleCollision(GameObject collision){
-      Debug.Log (collision.name);
+      Debug.Log ("Collision has occured on: " + collision.name);
 
-      if (collision.name == "Fireball") {
-          //TODO: make explosion
-          Destroy(collision);
+      if (collision.tag == MagicConstant.FIREBALL_TAG) {
 
           //TODO: change health decrement based on type of fireball
           health -= 25;

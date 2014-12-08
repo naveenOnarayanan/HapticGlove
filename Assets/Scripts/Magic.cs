@@ -51,46 +51,47 @@ public class Magic : MonoBehaviour {
             } else {
                 Destroy(obj);
             }
+            string magicType = null;
     				switch (type) {
                 case MagicType.FireCharge:
                     switch (size) {
                       case Size.Small:
-                          obj = (GameObject)Instantiate (Resources.Load ("Fire_01"), vector, transform.rotation);
+                          magicType = MagicConstant.FIREBALL_SMALL_NAME;                       
                           break;
                       case Size.Medium:
-                          obj = (GameObject)Instantiate (Resources.Load ("Fire_02"), vector, transform.rotation);
+                          magicType = MagicConstant.FIREBALL_MEDIUM_NAME;
                           break;
                       case Size.Large:
-                          obj = (GameObject) Instantiate (Resources.Load ("Fire_03"), vector, transform.rotation);
+                          magicType = MagicConstant.FIREBALL_LARGE_NAME;
                           break;
                     }
+                    
                     break;
                 //TODO: differentiate difference ices
                 case MagicType.IceCharge:
                     switch (size) {
                     case Size.Small:
-                        obj = (GameObject)Instantiate (Resources.Load ("Stream"));
+                        magicType = MagicConstant.ICEWALL_SMALL_NAME;
                         break;
                     case Size.Medium:
-                        obj = (GameObject)Instantiate (Resources.Load ("Stream"));
+                        magicType = MagicConstant.ICEWALL_MEDIUM_NAME;
                         break;
                     case Size.Large:
-                        obj = (GameObject)Instantiate (Resources.Load ("Stream"));
+                        magicType = MagicConstant.ICEWALL_LARGE_NAME;
                         break;
                     }
                     break;
                 case MagicType.Fireball:
                     // TODO: Need to get the fireball to be shot where the user is facing
-                    obj = (GameObject)Instantiate(Resources.Load ("Fireball"), vector, Camera.main.transform.rotation); 
-                    //obj.AddComponent<Rigidbody>();
-                    //obj.rigidbody.useGravity = false;
-                    obj.AddComponent<BoxCollider>();
+                    magicType = MagicConstant.FIREBALL_RELEASE_NAME;
                     break;
                 default:
                     break;
         				}
-    		}
-
+            if (magicType != null) {
+                obj = (GameObject)Instantiate(Resources.Load (magicType), vector, Camera.main.transform.rotation); 
+            }
+    		} 
   		  lastCall = type;
   	}
 

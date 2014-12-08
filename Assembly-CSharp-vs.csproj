@@ -80,6 +80,7 @@
      <Compile Include="Assets\Scripts\FireAudio.cs" />
      <Compile Include="Assets\Scripts\HandMagic.cs" />
      <Compile Include="Assets\Scripts\Magic.cs" />
+     <Compile Include="Assets\Scripts\MagicConstant.cs" />
      <Compile Include="Assets\Scripts\MagicHelper.cs" />
      <Compile Include="Assets\Scripts\NetworkController.cs" />
      <Compile Include="Assets\Scripts\ParticleHelper.cs" />
