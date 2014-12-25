@@ -15,5 +15,4 @@ public class MagicConstant {
 
     public static string FIREBALL_RELEASE_NAME = "Fireball";
     public static string ICEWALL_RELEASE_NAME = "Icewall";
-
 }

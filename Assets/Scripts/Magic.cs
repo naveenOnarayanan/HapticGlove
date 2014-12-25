@@ -7,32 +7,30 @@ using UnityEngine;
 
 public class Magic : MonoBehaviour {
     NetworkController nc;
-    string PELTIER = "peltier";
-    string SERVO = "servo";
 
     Controller controller;
-  	Hand mainHand;
+    Hand mainHand;
 
-  	int chargeCounter = 0;
+    int chargeCounter = 0;
     int cooldownCounter = 0;
 
-    int MIN_THRESHOLD = 20;
-    int SHORT_THRESHOLD = 200;
-    int MEDIUM_THRESHOLD = 400;
-    int LONG_THRESHOLD = 600;
-    int COOLDOWN_THRESHOLD = 500;
+    const int MIN_THRESHOLD = 20;
+    const int SHORT_THRESHOLD = 200;
+    const int MEDIUM_THRESHOLD = 400;
+    const int LONG_THRESHOLD = 600;
+    const int COOLDOWN_THRESHOLD = 500;
 
-  	GameObject obj;
-  	MagicType lastCall;
+    GameObject obj;
+    MagicType lastCall;
 
     bool canCharge = false;
     MagicType canCall;
 
-  	enum MagicType {
-  		FireCharge,
-  		Fireball,
-  		IceCharge
-  	};
+    enum MagicType {
+        FireCharge,
+        Fireball,
+        IceCharge
+    };
 
     enum Size {
         Small,
@@ -40,60 +38,60 @@ public class Magic : MonoBehaviour {
         Large
     }
 
-  	void CreateObject(MagicType type, Size size = Size.Small) {
-    		Vector3 vector = transform.TransformPoint (mainHand.PalmPosition.ToUnityScaled ());
-    		if (obj != null && type == lastCall) {
-      			obj.transform.position = transform.TransformPoint (mainHand.PalmPosition.ToUnityScaled ());
-      			obj.transform.rotation = transform.rotation;
-    		} else {
-            if (lastCall == MagicType.Fireball) {
-                Destroy (obj, 5);
-            } else {
-                Destroy(obj);
+    void CreateObject(MagicType type, Size size = Size.Small) {
+        Vector3 vector = transform.TransformPoint (mainHand.PalmPosition.ToUnityScaled ());
+        if (obj != null && type == lastCall) {
+              obj.transform.position = transform.TransformPoint (mainHand.PalmPosition.ToUnityScaled ());
+              obj.transform.rotation = transform.rotation;
+        } else {
+        if (lastCall == MagicType.Fireball) {
+            Destroy (obj, 5);
+        } else {
+            Destroy(obj);
+        }
+        string magicType = null;
+            switch (type) {
+            case MagicType.FireCharge:
+                switch (size) {
+                case Size.Small:
+                    magicType = MagicConstant.FIREBALL_SMALL_NAME;                       
+                    break;
+                case Size.Medium:
+                    magicType = MagicConstant.FIREBALL_MEDIUM_NAME;
+                    break;
+                case Size.Large:
+                    magicType = MagicConstant.FIREBALL_LARGE_NAME;
+                    break;
+                }
+                break;
+            //TODO: differentiate difference ices
+            case MagicType.IceCharge:
+                switch (size) {
+                case Size.Small:
+                    magicType = MagicConstant.ICEWALL_SMALL_NAME;
+                    break;
+                case Size.Medium:
+                    magicType = MagicConstant.ICEWALL_MEDIUM_NAME;
+                    break;
+                case Size.Large:
+                    magicType = MagicConstant.ICEWALL_LARGE_NAME;
+                    break;
+                }
+                break;
+            case MagicType.Fireball:
+                // TODO: Need to get the fireball to be shot where the user is facing
+                magicType = MagicConstant.FIREBALL_RELEASE_NAME;
+                break;
+            default:
+                break;
             }
-            string magicType = null;
-    				switch (type) {
-                case MagicType.FireCharge:
-                    switch (size) {
-                      case Size.Small:
-                          magicType = MagicConstant.FIREBALL_SMALL_NAME;                       
-                          break;
-                      case Size.Medium:
-                          magicType = MagicConstant.FIREBALL_MEDIUM_NAME;
-                          break;
-                      case Size.Large:
-                          magicType = MagicConstant.FIREBALL_LARGE_NAME;
-                          break;
-                    }
-                    
-                    break;
-                //TODO: differentiate difference ices
-                case MagicType.IceCharge:
-                    switch (size) {
-                    case Size.Small:
-                        magicType = MagicConstant.ICEWALL_SMALL_NAME;
-                        break;
-                    case Size.Medium:
-                        magicType = MagicConstant.ICEWALL_MEDIUM_NAME;
-                        break;
-                    case Size.Large:
-                        magicType = MagicConstant.ICEWALL_LARGE_NAME;
-                        break;
-                    }
-                    break;
-                case MagicType.Fireball:
-                    // TODO: Need to get the fireball to be shot where the user is facing
-                    magicType = MagicConstant.FIREBALL_RELEASE_NAME;
-                    break;
-                default:
-                    break;
-        				}
+
             if (magicType != null) {
                 obj = (GameObject)Instantiate(Resources.Load (magicType), vector, Camera.main.transform.rotation); 
             }
-    		} 
-  		  lastCall = type;
-  	}
+        } 
+        lastCall = type;
+    }
 
     void neutralize() {
         obj = null;
@@ -101,19 +99,19 @@ public class Magic : MonoBehaviour {
         canCharge = false;
         nc.sendData("\"temperature\": 0", PELTIER);
     }
-    
-  	// Use this for initialization
-  	void Start () {
-    		controller = new Controller ();
-    		controller.EnableGesture (Gesture.GestureType.TYPE_CIRCLE);
-    		controller.EnableGesture (Gesture.GestureType.TYPE_SWIPE);
+
+        // Use this for initialization
+    void Start () {
+        controller = new Controller ();
+        controller.EnableGesture (Gesture.GestureType.TYPE_CIRCLE);
+        controller.EnableGesture (Gesture.GestureType.TYPE_SWIPE);
 
         nc = new NetworkController();
-  	}
-  	
-  	// Update is called once per frame
-  	void Update () {
-    		mainHand = controller.Frame().Hands[0];
+    }
+
+    // Update is called once per frame
+    void Update () {
+        mainHand = controller.Frame().Hands[0];
 
         //Debug.Log (MagicHelper.handFaceForward(mainHand, controller.Frame()) + " " + mainHand.Direction + ":" + mainHand.PalmNormal);
 
@@ -187,5 +185,5 @@ public class Magic : MonoBehaviour {
 
             canCharge = false;
         }
-  	}
+    }
 }

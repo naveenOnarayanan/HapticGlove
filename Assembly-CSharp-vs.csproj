@@ -19,7 +19,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_4_5_0;UNITY_4_5;UNITY_STANDALONE_WIN;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_MONO;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE;UNITY_PRO_LICENSE</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_4_5_1;UNITY_4_5;UNITY_STANDALONE_WIN;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_MONO;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE;UNITY_PRO_LICENSE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -78,6 +78,8 @@
      <Compile Include="Assets\Scripts\FadeInAudio.cs" />
      <Compile Include="Assets\Scripts\Fire.cs" />
      <Compile Include="Assets\Scripts\FireAudio.cs" />
+     <Compile Include="Assets\Scripts\Gesture.cs" />
+     <Compile Include="Assets\Scripts\GestureConstants.cs" />
      <Compile Include="Assets\Scripts\HandMagic.cs" />
      <Compile Include="Assets\Scripts\Magic.cs" />
      <Compile Include="Assets\Scripts\MagicConstant.cs" />
@@ -88,6 +90,74 @@
      <Compile Include="Assets\Scripts\ReticleMovement.cs" />
      <Compile Include="Assets\Scripts\Sprinkler.cs" />
      <Compile Include="Assets\Scripts\SprinklerAudio.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Disposables\BooleanDisposable.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Disposables\CompositeDisposable.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Disposables\Disposable.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Disposables\DisposableExtensions.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Disposables\ICancelable.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Disposables\MultipleAssignmentDisposable.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Disposables\RefCountDisposable.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Disposables\ScheduledDisposable.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Disposables\SerialDisposable.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Disposables\SingleAssignmentDisposable.cs" />
+     <Compile Include="Assets\UniRx\Scripts\EventPattern.cs" />
+     <Compile Include="Assets\UniRx\Scripts\InternalUtil\ImmutableList.cs" />
+     <Compile Include="Assets\UniRx\Scripts\InternalUtil\ListObserver.cs" />
+     <Compile Include="Assets\UniRx\Scripts\InternalUtil\PriorityQueue.cs" />
+     <Compile Include="Assets\UniRx\Scripts\InternalUtil\ReflectionAccessor.cs" />
+     <Compile Include="Assets\UniRx\Scripts\InternalUtil\ScheduledItem.cs" />
+     <Compile Include="Assets\UniRx\Scripts\InternalUtil\ThreadSafeQueueWorker.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Notification.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Notifiers\BooleanNotifier.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Notifiers\CountNotifier.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Notifiers\ScheduledNotifier.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Observable.Aggregate.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Observable.Binding.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Observable.Blocking.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Observable.Concatenate.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Observable.Concurrency.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Observable.Conversions.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Observable.Creation.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Observable.ErrorHandling.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Observable.Events.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Observable.Joins.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Observable.Paging.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Observable.Time.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Observable.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Observer.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Schedulers\CurrentThreadScheduler.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Schedulers\ImmediateScheduler.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Schedulers\Scheduler.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Schedulers\ThreadPoolScheduler.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Subjects\AsyncSubject.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Subjects\BehaviorSubject.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Subjects\ConnectableObservable.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Subjects\ISubject.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Subjects\ReplaySubject.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Subjects\Subject.cs" />
+     <Compile Include="Assets\UniRx\Scripts\System\IProgress.cs" />
+     <Compile Include="Assets\UniRx\Scripts\System\Tuple.cs" />
+     <Compile Include="Assets\UniRx\Scripts\System\Unit.cs" />
+     <Compile Include="Assets\UniRx\Scripts\TimeInterval.cs" />
+     <Compile Include="Assets\UniRx\Scripts\Timestamped.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityEngineBridge\AotSafeExtensions.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityEngineBridge\CancellationToken.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityEngineBridge\Diagnostics\LogEntry.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityEngineBridge\Diagnostics\LogEntryExtensions.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityEngineBridge\Diagnostics\Logger.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityEngineBridge\Diagnostics\ObservableLogger.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityEngineBridge\Diagnostics\UnityDebugSink.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityEngineBridge\LazyTask.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityEngineBridge\MainThreadDispatcher.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityEngineBridge\MainThreadScheduler.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityEngineBridge\Observable.Unity.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityEngineBridge\ObservableMonoBehaviour.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityEngineBridge\ObservableWWW.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityEngineBridge\TypedMonoBehaviour.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityEngineBridge\UI\ObserveExtensions.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityEngineBridge\UnityEventExtensions.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityWinRTBridge\Thread.cs" />
+     <Compile Include="Assets\UniRx\Scripts\UnityWinRTBridge\ThreadPoolScheduler_UnityWinRT.cs" />
      <None Include="Assets\Standard Assets\Projectors\Guidelines.txt" />
      <None Include="Assets\Models\Standard Assets\Glass Refraction (Pro Only)\Sources\Shaders\Glass-Stained-BumpDistort.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BlendOneOne.shader" />
@@ -119,6 +189,7 @@
      <None Include="Assets\Models\Standard Assets\Water (Pro Only)\Water4\Sources\Shaders\FX-SimpleWater4.shader" />
      <None Include="Assets\Models\Standard Assets\Skyboxes\_skybox info.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\frag_ao.cginc" />
+     <None Include="Assets\UniRx\ReadMe.txt" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-BasicOutline.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\DepthOfField34.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\MobileBlur.shader" />
@@ -173,13 +244,13 @@
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BlurAndFlares.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BlendForBloom.shader" />
  <Reference Include="Assembly-UnityScript-firstpass">
- <HintPath>C:/Users/Naveen/Documents/HapticGlove/HapticGlove/Library/ScriptAssemblies/Assembly-UnityScript-firstpass.dll</HintPath>
+ <HintPath>F:/HapticGlove/Library/ScriptAssemblies/Assembly-UnityScript-firstpass.dll</HintPath>
  </Reference>
  <Reference Include="ICSharpCode.SharpZipLib">
- <HintPath>C:/Users/Naveen/Documents/HapticGlove/HapticGlove/Assets/Plugins/ICSharpCode.SharpZipLib.dll</HintPath>
+ <HintPath>F:/HapticGlove/Assets/Plugins/ICSharpCode.SharpZipLib.dll</HintPath>
  </Reference>
  <Reference Include="LeapCSharp.NET3.5">
- <HintPath>C:/Users/Naveen/Documents/HapticGlove/HapticGlove/Assets/Plugins/LeapCSharp.NET3.5.dll</HintPath>
+ <HintPath>F:/HapticGlove/Assets/Plugins/LeapCSharp.NET3.5.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>
