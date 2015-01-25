@@ -13,6 +13,9 @@ public class NetworkController
     Socket client;
     IPEndPoint servoServer;
     IPEndPoint peltierServer;
+
+    string PELTIER = "peltier";
+    string SERVO = "servo";
     
     int servoPort = 3000;
     int peltierPort = 3001;
@@ -52,6 +55,26 @@ public class NetworkController
         byte[] d = Encoding.UTF8.GetBytes (json);
         
         client.SendTo (d, d.Length, SocketFlags.None, serverMap[serverName]);
+    }
+
+    public void resetServo() {
+        sendData ("\"angle\": 0", SERVO);
+    }
+
+    public void pullServo() {
+        sendData ("\"angle\": 180", SERVO);
+    }
+
+    public void resetPeltier() {
+        sendData("\"temperature\": 0", PELTIER);
+    }
+
+    public void heatPeltier() {
+        sendData("\"temperature\": 10", PELTIER);
+    }
+
+    public void coolPeltier() {
+        sendData("\"temperature\": -10", PELTIER);
     }
 }
 

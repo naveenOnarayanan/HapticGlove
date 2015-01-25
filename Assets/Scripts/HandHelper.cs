@@ -4,8 +4,8 @@ using System.Collections;
 using Leap;
 
 //helper methods for doing magic stuffs
-public static class MagicHelper {
-    public static bool handFaceUp(Hand mainHand, Frame frame) {
+public static class HandHelper {
+    public static bool isFaceUp(Hand mainHand, Frame frame) {
         Pointable finger;
         bool fingerFlat = true;
         
@@ -19,7 +19,24 @@ public static class MagicHelper {
         return mainHand.Direction.y > 0.5 && mainHand.PalmNormal.y < 0 && mainHand.PalmNormal.z < 0 && fingerFlat;
     }
 
-    public static bool handFaceForward(Hand mainHand, Frame frame) {
+    public static bool isFaceForward(Hand mainHand, Frame frame) {
         return mainHand.PalmNormal.y > 0.8 && mainHand.PalmNormal.z > 0.1 && mainHand.PalmNormal.z < 0.5;
+    }
+
+    static int getExtendedFingers(Hand hand) {
+        int f = 0;
+
+        for (int i = 0; i < hand.Fingers.Count; i++) {
+            if (hand.Fingers[i].IsExtended) {
+                f++;
+            }
+        }
+
+        return f;
+    }
+
+    public static bool isClosedFist(Hand hand) {
+        //return getExtendedFingers(hand) == 0;
+        return true;
     }
 }
