@@ -15,7 +15,7 @@ public class Magic : MonoBehaviour {
   	int chargeCounter = 0;
     int idleCounter = 0;
 
-    int MIN_THRESHOLD = 20;
+    int MIN_THRESHOLD = 5;
     int SHORT_THRESHOLD = 200;
     int MEDIUM_THRESHOLD = 400;
     int LONG_THRESHOLD = 600;
@@ -51,6 +51,7 @@ public class Magic : MonoBehaviour {
                 Destroy(lastCreatedObj);
             }
             string magicType = null;
+
     				switch (type) {
                 case MagicType.FireCharge:
                     switch (size) {
@@ -76,10 +77,11 @@ public class Magic : MonoBehaviour {
                 default:
                     break;
         				}
+
             if (magicType != null) {
                 lastCreatedObj = (GameObject)Instantiate(Resources.Load (magicType), vector, Camera.main.transform.rotation); 
             }
-    		} 
+        } 
   		  lastCall = type;
   	}
 
@@ -95,9 +97,17 @@ public class Magic : MonoBehaviour {
 
         nc.resetPeltier();
     }
+
+    void idling() {
+        //buffer period to confirm doing nothing when hand's on screen
+        if (idleCounter > IDLE_THRESHOLD) {
+            neutralize ();
+        }
+        idleCounter++;
+    }
     
-  	// Use this for initialization
-  	void Start () {
+    // Use this for initialization
+    void Start () {
     		controller = new Controller ();
         nc = new NetworkController();
         cd = new CooldownHelper ();
@@ -109,68 +119,53 @@ public class Magic : MonoBehaviour {
 
         //Debug.Log (HandHelper.isFaceForward(mainHand, controller.Frame()) + " " + mainHand.Direction + ":" + mainHand.PalmNormal);
 
-        /*
-        //gestures within last 10 frames
-        foreach (Gesture gesture in controller.Frame().Gestures(controller.Frame(10))) {
-            if (gesture.Type == Gesture.GestureType.TYPE_CIRCLE) {
-                canCharge = true;
-            }
-        }
-        */
-        if (mainHand != null) {
-            Debug.Log (HandHelper.isClosedFist(mainHand));
-
-        }
         //cooling down, don't do anything else
-        if (cd.coolingDown(nc)) {
+        if (cd.coolingDown (nc)) {
             neutralize ();
             //TODO: have this work based on data from servo motor
-        } /*else if (HandHelper.isClosedFist (mainHand)) {
-            canCharge = true;
-            Debug.Log ("closed fist");
-            //TODO: have this work based on data from servo motor
-            //charge fire
-        } */
-        else if (HandHelper.isFaceUp (mainHand, controller.Frame ()) && canCharge) {
-            //TODO: resize fireball instead of creating different ones?
-            if (chargeCounter <= LONG_THRESHOLD) {
-                if (chargeCounter > SHORT_THRESHOLD && chargeCounter <= MEDIUM_THRESHOLD) {
-                    CreateObject (MagicType.FireCharge, Size.Medium);
-                } else if (chargeCounter > MEDIUM_THRESHOLD) {
-                    CreateObject (MagicType.FireCharge, Size.Large);
+        //hand stuff
+        } else if (mainHand != null && mainHand.IsValid) {
+            if (HandHelper.isClosedFist(mainHand)) {
+                canCharge = true;
+            } else if (HandHelper.isFaceUp (mainHand, controller.Frame ()) && canCharge) {
+                //TODO: resize fireball instead of creating different ones?
+                if (chargeCounter <= LONG_THRESHOLD) {
+                    if (chargeCounter > SHORT_THRESHOLD && chargeCounter <= MEDIUM_THRESHOLD) {
+                        CreateObject (MagicType.FireCharge, Size.Medium);
+                    } else if (chargeCounter > MEDIUM_THRESHOLD) {
+                        CreateObject (MagicType.FireCharge, Size.Large);
+                    } else {
+                        CreateObject (MagicType.FireCharge, Size.Small);
+                    }
+                
+                    //TODO: differentiate hotness when we have that established
+                    nc.heatPeltier ();
+                    chargeCounter++;
+                    //overloaded, go into cooldown
                 } else {
-                    CreateObject (MagicType.FireCharge, Size.Small);
+                    Debug.Log ("Charged too long, in cooldown mode");
+                    Destroy (lastCreatedObj.gameObject); 
+                
+                    neutralize ();
+                    cd.startCooldown ();
                 }
-                
-                //TODO: differentiate hotness when we have that established
-                nc.heatPeltier ();
-                chargeCounter++;
-                //overloaded, go into cooldown
+                //shoot charged object
+            } else if (HandHelper.isFaceForward (mainHand, controller.Frame ()) && chargeCounter > MIN_THRESHOLD) {
+                //TODO: change fireball based on chargedness
+                CreateObject (MagicType.Fireball);
+
+                neutralize ();
+                //TODO: charge ice wall
+            } else if (HandHelper.isFaceForward (mainHand, controller.Frame ())) {
+                //check for collision with an ice object. if there isn't any, create one
+
+                //if there is, increase its strength
+                //hand not doing anything
             } else {
-                Debug.Log ("Charged too long, in cooldown mode");
-                Destroy (lastCreatedObj.gameObject); 
-                
-                neutralize ();
-                cd.startCooldown();
+                idling();
             }
-            //shoot charged object
-        } else if (HandHelper.isFaceForward (mainHand, controller.Frame ()) && chargeCounter > MIN_THRESHOLD) {
-            //TODO: change fireball based on chargedness
-            CreateObject (MagicType.Fireball);
-
-            neutralize ();
-            //TODO: charge ice wall
-        } else if (HandHelper.isFaceForward(mainHand, controller.Frame ())) {
-            //check for collision with an ice object. if there isn't any, create one
-
-            //if there is, increase its strength
-        //not doing anything
         } else {
-            //buffer period to confirm doing nothing
-            if (idleCounter > IDLE_THRESHOLD) {
-                neutralize ();
-            }
-            idleCounter++;
+            idling();
         }
     }
 }
