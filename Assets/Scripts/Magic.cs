@@ -30,7 +30,7 @@ public class Magic : MonoBehaviour {
   	enum MagicType {
   		FireCharge,
   		Fireball,
-  		IceCharge
+      IceWall
   	};
 
     enum Size {
@@ -67,9 +67,6 @@ public class Magic : MonoBehaviour {
                     }
                     
                     break;
-                case MagicType.IceCharge:
-                    magicType = MagicConstant.ICEWALL_CAST;
-                    break;
                 case MagicType.Fireball:
                     // TODO: Need to get the fireball to be shot where the user is facing
                     magicType = MagicConstant.FIREBALL_RELEASE_NAME;
@@ -101,6 +98,7 @@ public class Magic : MonoBehaviour {
     void idling() {
         //buffer period to confirm doing nothing when hand's on screen
         if (idleCounter > IDLE_THRESHOLD) {
+            //Debug.Log ("doing nothing");
             neutralize ();
         }
         idleCounter++;
@@ -127,6 +125,7 @@ public class Magic : MonoBehaviour {
         } else if (mainHand != null && mainHand.IsValid) {
             if (HandHelper.isClosedFist(mainHand)) {
                 canCharge = true;
+                //Debug.Log ("Closed fist");
             } else if (HandHelper.isFaceUp (mainHand, controller.Frame ()) && canCharge) {
                 //TODO: resize fireball instead of creating different ones?
                 if (chargeCounter <= LONG_THRESHOLD) {
@@ -137,6 +136,8 @@ public class Magic : MonoBehaviour {
                     } else {
                         CreateObject (MagicType.FireCharge, Size.Small);
                     }
+
+                    //Debug.Log ("Charging: " + chargeCounter);
                 
                     //TODO: differentiate hotness when we have that established
                     nc.heatPeltier ();
@@ -153,14 +154,28 @@ public class Magic : MonoBehaviour {
             } else if (HandHelper.isFaceForward (mainHand, controller.Frame ()) && chargeCounter > MIN_THRESHOLD) {
                 //TODO: change fireball based on chargedness
                 CreateObject (MagicType.Fireball);
+                //Debug.Log ("Shoot fireball");
 
                 neutralize ();
-                //TODO: charge ice wall
+                //charge ice wall
             } else if (HandHelper.isFaceForward (mainHand, controller.Frame ())) {
-                //check for collision with an ice object. if there isn't any, create one
+                Vector3 vector = transform.TransformPoint (mainHand.PalmPosition.ToUnityScaled ());
+                Collider[] hitColliders = Physics.OverlapSphere(vector, 2);
 
-                //if there is, increase its strength
-                //hand not doing anything
+                bool collided = false;
+
+                for (int i = 0; i < hitColliders.Length; i++) {
+                    if (hitColliders[i].tag == MagicConstant.ICEWALL_TAG) {
+                        hitColliders[i].SendMessage(MagicConstant.ICEWALL_CAST_TAG);
+                        collided = true;
+                    }
+                }
+
+                if (!collided) {
+                    Debug.Log("creating ice wall");
+                    Instantiate(Resources.Load(MagicConstant.ICEWALL_NAME), vector, Camera.main.transform.rotation); 
+                }
+
             } else {
                 idling();
             }

@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Player : MonoBehaviour {
-  public int health;
+public class Player : Character {
   //private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
 
 	// Use this for initialization
@@ -19,15 +18,4 @@ public class Player : MonoBehaviour {
 
       }
 	}
-
-  void OnParticleCollision(GameObject collision){
-      Debug.Log ("Collision has occured on: " + collision.name);
-
-      if (collision.tag == MagicConstant.FIREBALL_TAG) {
-
-          //TODO: change health decrement based on type of fireball
-          health -= 25;
-          Debug.Log(health);
-      }
-  }
 }
