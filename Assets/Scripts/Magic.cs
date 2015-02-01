@@ -98,7 +98,7 @@ public class Magic : MonoBehaviour {
     void idling() {
         //buffer period to confirm doing nothing when hand's on screen
         if (idleCounter > IDLE_THRESHOLD) {
-            //Debug.Log ("doing nothing");
+            Debug.Log ("doing nothing");
             neutralize ();
         }
         idleCounter++;
@@ -109,6 +109,8 @@ public class Magic : MonoBehaviour {
     		controller = new Controller ();
         nc = new NetworkController();
         cd = new CooldownHelper ();
+
+        controller.EnableGesture (Gesture.GestureType.TYPE_CIRCLE);
   	}
   	
   	// Update is called once per frame
@@ -125,7 +127,7 @@ public class Magic : MonoBehaviour {
         } else if (mainHand != null && mainHand.IsValid) {
             if (HandHelper.isClosedFist(mainHand)) {
                 canCharge = true;
-                //Debug.Log ("Closed fist");
+                Debug.Log ("Closed fist");
             } else if (HandHelper.isFaceUp (mainHand, controller.Frame ()) && canCharge) {
                 //TODO: resize fireball instead of creating different ones?
                 if (chargeCounter <= LONG_THRESHOLD) {
@@ -137,7 +139,7 @@ public class Magic : MonoBehaviour {
                         CreateObject (MagicType.FireCharge, Size.Small);
                     }
 
-                    //Debug.Log ("Charging: " + chargeCounter);
+                    Debug.Log ("Charging: " + chargeCounter);
                 
                     //TODO: differentiate hotness when we have that established
                     nc.heatPeltier ();
@@ -154,7 +156,7 @@ public class Magic : MonoBehaviour {
             } else if (HandHelper.isFaceForward (mainHand, controller.Frame ()) && chargeCounter > MIN_THRESHOLD) {
                 //TODO: change fireball based on chargedness
                 CreateObject (MagicType.Fireball);
-                //Debug.Log ("Shoot fireball");
+                Debug.Log ("Shoot fireball");
 
                 neutralize ();
                 //charge ice wall
@@ -171,9 +173,15 @@ public class Magic : MonoBehaviour {
                     }
                 }
 
+                //create an ice wall if there isn't a nearby one and a circle gesture was performed
                 if (!collided) {
-                    Debug.Log("creating ice wall");
-                    Instantiate(Resources.Load(MagicConstant.ICEWALL_NAME), vector, Camera.main.transform.rotation); 
+                    foreach (Gesture gesture in controller.Frame().Gestures(controller.Frame(10))) {
+                        if (gesture.Type == Gesture.GestureType.TYPE_CIRCLE) {
+                            Debug.Log("creating ice wall");        
+                            Instantiate(Resources.Load(MagicConstant.ICEWALL_NAME), vector, Camera.main.transform.rotation); 
+                            break;
+                        }
+                    }
                 }
 
             } else {

@@ -10,17 +10,18 @@ public static class HandHelper {
         bool fingerFlat = true;
         
         //Debug.Log (transform.TransformPoint(hand.PalmPosition.ToUnityScaled()));
-        
+        /*
         for (int i = 0; i < frame.Pointables.Count; i++) {
             finger = frame.Pointables[i];
             fingerFlat &= finger.Direction.y > 0;
         }
+        */
         
         return hand.Direction.y > 0.5 && hand.PalmNormal.y < 0 && hand.PalmNormal.z < 0 && fingerFlat;
     }
 
     public static bool isFaceForward(Hand hand, Frame frame) {
-        return hand.PalmNormal.y > 0.8 && hand.PalmNormal.z > 0.1 && hand.PalmNormal.z < 0.5;
+        return hand.PalmNormal.y > 0.8 && hand.PalmNormal.z > -0.2 && hand.PalmNormal.z < 0.5;
     }
 
     static int getExtendedFingers(Hand hand) {
