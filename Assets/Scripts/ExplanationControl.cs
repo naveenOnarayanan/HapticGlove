@@ -61,6 +61,9 @@ public class ExplanationControl : MonoBehaviour {
             deltaTime = EXPLANATION_TIME;
             counter = counter + 1;
         }
+        if (counter >= 3) {
+            Application.LoadLevel(Application.loadedLevel + 1);
+        }
 
   	}
 }
