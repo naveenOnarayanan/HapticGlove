@@ -3,11 +3,14 @@ using System.Collections;
 
 public class IceWall : Character {
     int chargeCounter = 0;
+    Vector3 startScale;
+    float scaleFactor = 1.0F;
 
   	// Use this for initialization
   	void Start () {
-          health = 25;
-          Debug.Log (health);
+        health = 25;
+        startScale = this.gameObject.transform.localScale;
+        Debug.Log (health);
   	}
   	
   	// Update is called once per frame
@@ -22,6 +25,11 @@ public class IceWall : Character {
     void IceCast() {
         chargeCounter++;
 
+        //increment size
+        scaleFactor += 0.002F;
+        this.gameObject.transform.localScale = startScale * scaleFactor;
+
+        //increment health
         if (chargeCounter > 60) {
             health += 5;
             Debug.Log ("charging ice: " + health);

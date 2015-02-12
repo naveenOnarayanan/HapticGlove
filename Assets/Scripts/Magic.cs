@@ -177,7 +177,7 @@ public class Magic : MonoBehaviour {
                 if (!collided) {
                     foreach (Gesture gesture in controller.Frame().Gestures(controller.Frame(10))) {
                         if (gesture.Type == Gesture.GestureType.TYPE_CIRCLE) {
-                            Debug.Log("creating ice wall");        
+                            Debug.Log("creating ice wall");
                             Instantiate(Resources.Load(MagicConstant.ICEWALL_NAME), vector, Camera.main.transform.rotation); 
                             break;
                         }
