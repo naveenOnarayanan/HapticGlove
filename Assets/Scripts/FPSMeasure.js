@@ -30,7 +30,7 @@ function Update()
     if( timeleft <= 0.0 )
     {
         // display two fractional digits (f2 format)
-        Debug.Log("" + (accum/frames).ToString("f2"));
+        //Debug.Log("" + (accum/frames).ToString("f2"));
         timeleft = updateInterval;
         accum = 0.0;
         frames = 0;

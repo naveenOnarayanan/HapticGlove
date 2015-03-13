@@ -24,6 +24,7 @@ public class Magic : MonoBehaviour {
 
     GameObject lastCreatedObj;
   	MagicType lastCall;
+    Size lastSize = Size.Small;
 
     bool canCharge = false;
 
@@ -39,9 +40,9 @@ public class Magic : MonoBehaviour {
         Large
     }
 
-  	void CreateObject(MagicType type, Size size = Size.Small) {
-    		Vector3 vector = transform.TransformPoint (mainHand.PalmPosition.ToUnityScaled ());
-    		if (lastCreatedObj != null && type == lastCall) {
+  	void CreateObject(MagicType type, Size size) {
+    		Vector3 vector = mainHand.PalmPosition.ToUnityScaled ();
+    		if (lastCreatedObj != null && type == lastCall && size == lastSize) {
             lastCreatedObj.transform.position = transform.TransformPoint (mainHand.PalmPosition.ToUnityScaled ());
             lastCreatedObj.transform.rotation = transform.rotation;
     		} else {
@@ -70,16 +71,19 @@ public class Magic : MonoBehaviour {
                 case MagicType.Fireball:
                     // TODO: Need to get the fireball to be shot where the user is facing
                     magicType = MagicConstant.FIREBALL_RELEASE_NAME;
+                    vector = vector + (Vector3.up * 0.2f);
                     break;
                 default:
                     break;
         				}
 
             if (magicType != null) {
+                vector = transform.TransformPoint(vector);
                 lastCreatedObj = (GameObject)Instantiate(Resources.Load (magicType), vector, Camera.main.transform.rotation); 
             }
         } 
   		  lastCall = type;
+        lastSize = size;
   	}
 
     void neutralize() {
@@ -98,7 +102,7 @@ public class Magic : MonoBehaviour {
     void idling() {
         //buffer period to confirm doing nothing when hand's on screen
         if (idleCounter > IDLE_THRESHOLD) {
-            Debug.Log ("doing nothing");
+            //Debug.Log ("doing nothing");
             neutralize ();
         }
         idleCounter++;
@@ -127,7 +131,7 @@ public class Magic : MonoBehaviour {
         } else if (mainHand != null && mainHand.IsValid) {
             if (HandHelper.isClosedFist(mainHand)) {
                 canCharge = true;
-                Debug.Log ("Closed fist");
+                //Debug.Log ("Closed fist");
             } else if (HandHelper.isFaceUp (mainHand, controller.Frame ()) && canCharge) {
                 //TODO: resize fireball instead of creating different ones?
                 if (chargeCounter <= LONG_THRESHOLD) {
@@ -139,7 +143,7 @@ public class Magic : MonoBehaviour {
                         CreateObject (MagicType.FireCharge, Size.Small);
                     }
 
-                    Debug.Log ("Charging: " + chargeCounter);
+                    //Debug.Log ("Charging: " + chargeCounter);
                 
                     //TODO: differentiate hotness when we have that established
                     nc.heatPeltier ();
@@ -155,14 +159,15 @@ public class Magic : MonoBehaviour {
                 //shoot charged object
             } else if (HandHelper.isFaceForward (mainHand, controller.Frame ()) && chargeCounter > MIN_THRESHOLD) {
                 //TODO: change fireball based on chargedness
-                CreateObject (MagicType.Fireball);
+                CreateObject (MagicType.Fireball, lastSize);
+                lastCreatedObj.name = lastSize.ToString();
                 Debug.Log ("Shoot fireball");
 
                 neutralize ();
                 //charge ice wall
             } else if (HandHelper.isFaceForward (mainHand, controller.Frame ())) {
-                Vector3 vector = transform.TransformPoint (mainHand.PalmPosition.ToUnityScaled ());
-                Collider[] hitColliders = Physics.OverlapSphere(vector, 2);
+                Vector3 palmPos = mainHand.PalmPosition.ToUnityScaled ();
+                Collider[] hitColliders = Physics.OverlapSphere(transform.TransformPoint(palmPos), 2);
 
                 bool collided = false;
 
@@ -177,8 +182,12 @@ public class Magic : MonoBehaviour {
                 if (!collided) {
                     foreach (Gesture gesture in controller.Frame().Gestures(controller.Frame(10))) {
                         if (gesture.Type == Gesture.GestureType.TYPE_CIRCLE) {
-                            Debug.Log("creating ice wall");
-                            Instantiate(Resources.Load(MagicConstant.ICEWALL_NAME), vector, Camera.main.transform.rotation); 
+                            Vector3 inFront = palmPos + (Vector3.up * 0.2f);
+                            //place on the ground
+                            inFront.z = 0;
+                            inFront = transform.TransformPoint(inFront);
+
+                            Instantiate(Resources.Load(MagicConstant.ICEWALL_NAME), inFront, Quaternion.identity); 
                             break;
                         }
                     }
