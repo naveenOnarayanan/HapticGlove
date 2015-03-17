@@ -40,15 +40,21 @@ public class Magic : MonoBehaviour {
         Large
     }
 
+    void CreateObject(MagicType type) {
+        CreateObject (type, lastSize);
+    }
+
   	void CreateObject(MagicType type, Size size) {
     		Vector3 vector = mainHand.PalmPosition.ToUnityScaled ();
-    		if (lastCreatedObj != null && type == lastCall && size == lastSize) {
+        Quaternion rotation = Camera.main.transform.rotation;
+            
+        if (lastCreatedObj != null && type == lastCall && size == lastSize) {
             lastCreatedObj.transform.position = transform.TransformPoint (mainHand.PalmPosition.ToUnityScaled ());
             lastCreatedObj.transform.rotation = transform.rotation;
     		} else {
             if (lastCall == MagicType.Fireball) {
                 Destroy (lastCreatedObj, 5);
-            } else {
+            } else if (lastCall == MagicType.FireCharge) {
                 Destroy(lastCreatedObj);
             }
             string magicType = null;
@@ -73,21 +79,30 @@ public class Magic : MonoBehaviour {
                     magicType = MagicConstant.FIREBALL_RELEASE_NAME;
                     vector = vector + (Vector3.up * 0.2f);
                     break;
+                case MagicType.IceWall:
+                    magicType = MagicConstant.ICEWALL_NAME;
+                    vector = vector + (Vector3.up * 0.2f);
+                    break;
                 default:
                     break;
         				}
 
             if (magicType != null) {
                 vector = transform.TransformPoint(vector);
-                lastCreatedObj = (GameObject)Instantiate(Resources.Load (magicType), vector, Camera.main.transform.rotation); 
+
+                if (type == MagicType.IceWall) {
+                    vector.y = 0.5f;
+                }
+
+                lastCreatedObj = (GameObject)Instantiate(Resources.Load (magicType), vector, rotation); 
             }
         } 
   		  lastCall = type;
         lastSize = size;
   	}
-
+        
     void neutralize() {
-        if (lastCreatedObj != null && lastCall != MagicType.Fireball) {
+        if (lastCreatedObj != null && lastCall == MagicType.FireCharge) {
             Destroy (lastCreatedObj.gameObject); 
             lastCreatedObj = null;
         }
@@ -121,6 +136,14 @@ public class Magic : MonoBehaviour {
   	void Update () {
         mainHand = controller.Frame ().Hands [0];
 
+        //testing purposes
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            Vector3 palmPos = mainHand.PalmPosition.ToUnityScaled ();
+            CreateObject(MagicType.IceWall);
+            return;
+        }
+        
         //Debug.Log (HandHelper.isFaceForward(mainHand, controller.Frame()) + " " + mainHand.Direction + ":" + mainHand.PalmNormal);
 
         //cooling down, don't do anything else
@@ -159,7 +182,7 @@ public class Magic : MonoBehaviour {
                 //shoot charged object
             } else if (HandHelper.isFaceForward (mainHand, controller.Frame ()) && chargeCounter > MIN_THRESHOLD) {
                 //TODO: change fireball based on chargedness
-                CreateObject (MagicType.Fireball, lastSize);
+                CreateObject (MagicType.Fireball);
                 lastCreatedObj.name = lastSize.ToString();
                 Debug.Log ("Shoot fireball");
 
@@ -182,16 +205,7 @@ public class Magic : MonoBehaviour {
                 if (!collided) {
                     foreach (Gesture gesture in controller.Frame().Gestures(controller.Frame(10))) {
                         if (gesture.Type == Gesture.GestureType.TYPE_CIRCLE) {
-                            Vector3 inFront = palmPos + (Vector3.up * 0.2f);
-
-                            inFront = transform.TransformPoint(inFront);
-                            //place on the ground
-                            inFront.y = 0.5f;
-                            Debug.Log (inFront);
-                            Quaternion rotation = Quaternion.identity;
-                            rotation.x = 90;
-
-                            Instantiate(Resources.Load(MagicConstant.ICEWALL_NAME), inFront, rotation); 
+                            CreateObject(MagicType.IceWall);
                             break;
                         }
                     }
