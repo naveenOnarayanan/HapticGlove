@@ -183,11 +183,15 @@ public class Magic : MonoBehaviour {
                     foreach (Gesture gesture in controller.Frame().Gestures(controller.Frame(10))) {
                         if (gesture.Type == Gesture.GestureType.TYPE_CIRCLE) {
                             Vector3 inFront = palmPos + (Vector3.up * 0.2f);
-                            //place on the ground
-                            inFront.z = 0;
-                            inFront = transform.TransformPoint(inFront);
 
-                            Instantiate(Resources.Load(MagicConstant.ICEWALL_NAME), inFront, Quaternion.identity); 
+                            inFront = transform.TransformPoint(inFront);
+                            //place on the ground
+                            inFront.y = 0.5f;
+                            Debug.Log (inFront);
+                            Quaternion rotation = Quaternion.identity;
+                            rotation.x = 90;
+
+                            Instantiate(Resources.Load(MagicConstant.ICEWALL_NAME), inFront, rotation); 
                             break;
                         }
                     }

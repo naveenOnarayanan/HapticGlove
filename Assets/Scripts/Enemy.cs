@@ -20,7 +20,7 @@ public class Enemy : Player
     void shootFireball() {
         Quaternion dir = getPlayerDir ();
         //lift it off the floor
-        Vector3 pos = transform.position + transform.up;
+        Vector3 pos = transform.position + transform.forward;
         Instantiate(Resources.Load (MagicConstant.FIREBALL_RELEASE_NAME), pos, dir);
     }
 
@@ -47,12 +47,15 @@ public class Enemy : Player
             float diff = (currPos - playerPos).sqrMagnitude;
 
             //TODO: rotate if not in line of sight, only run when facing you
+            //TODO: run around walls instead of through them
+            //TODO: randomly shoot fireballs
 
             //don't want to get too close
             if (diff > 10) {
                 animation.Play ("run");
-
-                transform.position = Vector3.MoveTowards (currPos, playerPos, 0.1f);
+                Vector3 moveTowards = Vector3.MoveTowards (currPos, playerPos, 0.1f);
+                moveTowards.y = 0;
+                transform.position = moveTowards;
             }
         }
     }
