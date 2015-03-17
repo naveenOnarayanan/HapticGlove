@@ -95,6 +95,11 @@ public class Magic : MonoBehaviour {
                 }
 
                 lastCreatedObj = (GameObject)Instantiate(Resources.Load (magicType), vector, rotation); 
+
+                if (type == MagicType.IceWall) {
+                    Vector3 rotate = new Vector3(-90, 0, 0);
+                    lastCreatedObj.transform.Rotate(rotate);
+                }
             }
         } 
   		  lastCall = type;
