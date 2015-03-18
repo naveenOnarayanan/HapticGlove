@@ -22,6 +22,8 @@ public class Magic : MonoBehaviour {
 
     int IDLE_THRESHOLD = 50;
 
+    int CLOSEST_ICEWALL_DIST = 3;
+
     GameObject objInCurrFrame;
     GameObject objInLastFrame;
   	MagicType lastCall;
@@ -89,7 +91,7 @@ public class Magic : MonoBehaviour {
                 case MagicType.Fireball:
                     // TODO: Need to get the fireball to be shot where the user is facing
                     magicType = MagicConstant.FIREBALL_RELEASE_NAME;
-                    vector = vector + (Vector3.up * 0.2f);
+                    vector = vector + (Vector3.up * 0.3f);
                     vector = transform.TransformPoint(vector);
                     break;
                 case MagicType.IceWall:
@@ -211,7 +213,7 @@ public class Magic : MonoBehaviour {
                 //charge ice wall
             } else if (HandHelper.isFaceForward (mainHand, controller.Frame ())) {
                 Vector3 palmPos = mainHand.PalmPosition.ToUnityScaled ();
-                Collider[] hitColliders = Physics.OverlapSphere(transform.TransformPoint(palmPos), 2);
+                Collider[] hitColliders = Physics.OverlapSphere(transform.TransformPoint(palmPos), CLOSEST_ICEWALL_DIST);
 
                 bool collided = false;
 
@@ -223,7 +225,7 @@ public class Magic : MonoBehaviour {
                 }
 
                 //create an ice wall if there isn't a nearby one and a circle gesture was performed
-                if (!collided) {
+                if (!collided && GameObject.FindWithTag(MagicConstant.FIREBALL_TAG) == null) {
                     foreach (Gesture gesture in controller.Frame().Gestures(controller.Frame(10))) {
                         if (gesture.Type == Gesture.GestureType.TYPE_CIRCLE) {
                             objInCurrFrame = CreateObject(MagicType.IceWall);
