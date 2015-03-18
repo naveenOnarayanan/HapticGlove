@@ -6,7 +6,8 @@ public class Player : Character {
 
 	// Use this for initialization
 	void Start () {
-        health = 100;
+        health = 200;
+        totalHealth = 200;
         Debug.Log (health);
 	}
 	

@@ -11,6 +11,7 @@ public class MagicConstant {
     public static string FIREBALL_LARGE_NAME = "Fire_03";
 
     public static string ICEWALL_NAME = "Ice_Wall";
+    public static string ICEWALL_SUMMON = "Ice_Effect";
 
     public static string FIREBALL_RELEASE_NAME = "Fireball";
 

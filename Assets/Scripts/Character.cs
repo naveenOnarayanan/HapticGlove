@@ -3,9 +3,24 @@ using System.Collections;
 
 public class Character : MonoBehaviour {
     public int health;
+    public int totalHealth;
+    //public RectTransform healthBar;
+    //public Transform cameraTrans;
+
+
     const int SMALL_DMG = 25;
     const int MED_DMG = 50;
     const int LARGE_DMG = 75;
+
+    void Start () {
+        //TODO: create health bar
+    }
+
+    void Update() {
+        //TODO: update location of health bar relative to camera
+        //Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(Camera.main, cameraTrans.position);
+        //healthBar.anchoredPosition = screenPoint - canvasRectT.sizeDelta / 2f;
+    }
     
     void OnParticleCollision(GameObject collision){
         Debug.Log ("Collision has occured on: " + collision.name);
@@ -28,6 +43,7 @@ public class Character : MonoBehaviour {
             }
 
             health -= dmg;
+            //TODO: update health bar
             Debug.Log(health);
         }
     }

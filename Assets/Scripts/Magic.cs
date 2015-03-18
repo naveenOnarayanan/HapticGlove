@@ -22,7 +22,8 @@ public class Magic : MonoBehaviour {
 
     int IDLE_THRESHOLD = 50;
 
-    GameObject lastCreatedObj;
+    GameObject objInCurrFrame;
+    GameObject objInLastFrame;
   	MagicType lastCall;
     Size lastSize = Size.Small;
 
@@ -40,23 +41,21 @@ public class Magic : MonoBehaviour {
         Large
     }
 
-    void CreateObject(MagicType type) {
-        CreateObject (type, lastSize);
+    GameObject CreateObject(MagicType type) {
+        return CreateObject (type, lastSize);
     }
 
-  	void CreateObject(MagicType type, Size size) {
+  	GameObject CreateObject(MagicType type, Size size) {
     		Vector3 vector = mainHand.PalmPosition.ToUnityScaled ();
         Quaternion rotation = Camera.main.transform.rotation;
             
-        if (lastCreatedObj != null && type == lastCall && size == lastSize) {
-            lastCreatedObj.transform.position = transform.TransformPoint (mainHand.PalmPosition.ToUnityScaled ());
-            lastCreatedObj.transform.rotation = transform.rotation;
+        //if same obj in last frame, then just move it
+        if (objInLastFrame != null && type == lastCall && size == lastSize) {
+            objInLastFrame.transform.position = transform.TransformPoint (mainHand.PalmPosition.ToUnityScaled ());
+            objInLastFrame.transform.rotation = transform.rotation;
+
+            return objInLastFrame;
     		} else {
-            if (lastCall == MagicType.Fireball) {
-                Destroy (lastCreatedObj, 5);
-            } else if (lastCall == MagicType.FireCharge) {
-                Destroy(lastCreatedObj);
-            }
             string magicType = null;
 
     				switch (type) {
@@ -72,44 +71,49 @@ public class Magic : MonoBehaviour {
                           magicType = MagicConstant.FIREBALL_LARGE_NAME;
                           break;
                     }
-                    
+                    vector = transform.TransformPoint(vector);
                     break;
                 case MagicType.Fireball:
                     // TODO: Need to get the fireball to be shot where the user is facing
                     magicType = MagicConstant.FIREBALL_RELEASE_NAME;
                     vector = vector + (Vector3.up * 0.2f);
+                    vector = transform.TransformPoint(vector);
                     break;
                 case MagicType.IceWall:
                     magicType = MagicConstant.ICEWALL_NAME;
-                    vector = vector + (Vector3.up * 0.2f);
+                    vector = vector + (Vector3.up * 0.4f);
+                    vector = transform.TransformPoint(vector);
+                    vector.y = 0f;
+                    Instantiate(Resources.Load (MagicConstant.ICEWALL_SUMMON), vector, rotation);
                     break;
                 default:
                     break;
         				}
 
-            if (magicType != null) {
-                vector = transform.TransformPoint(vector);
+            objInCurrFrame = (GameObject)Instantiate(Resources.Load (magicType), vector, rotation); 
 
-                if (type == MagicType.IceWall) {
-                    vector.y = 0.5f;
-                }
-
-                lastCreatedObj = (GameObject)Instantiate(Resources.Load (magicType), vector, rotation); 
-
-                if (type == MagicType.IceWall) {
+            switch (type) {
+                case MagicType.Fireball:
+                    objInCurrFrame.name = lastSize.ToString();
+                    break;
+                case MagicType.IceWall:
                     Vector3 rotate = new Vector3(-90, 0, 0);
-                    lastCreatedObj.transform.Rotate(rotate);
-                }
+                    objInCurrFrame.transform.Rotate(rotate);
+                    break;
+                default:
+                    break;
             }
+
+            lastCall = type;
+            lastSize = size;
+            
+            return objInCurrFrame;
         } 
-  		  lastCall = type;
-        lastSize = size;
   	}
         
     void neutralize() {
-        if (lastCreatedObj != null && lastCall == MagicType.FireCharge) {
-            Destroy (lastCreatedObj.gameObject); 
-            lastCreatedObj = null;
+        if (objInLastFrame != null && lastCall == MagicType.FireCharge) {
+            Destroy (objInLastFrame.gameObject); 
         }
 
         chargeCounter = 0;
@@ -141,11 +145,13 @@ public class Magic : MonoBehaviour {
   	void Update () {
         mainHand = controller.Frame ().Hands [0];
 
+        objInLastFrame = objInCurrFrame;
+        objInCurrFrame = null;
+
         //testing purposes
         if (Input.GetKeyDown(KeyCode.I))
         {
-            Vector3 palmPos = mainHand.PalmPosition.ToUnityScaled ();
-            CreateObject(MagicType.IceWall);
+            objInCurrFrame = CreateObject(MagicType.IceWall);
             return;
         }
         
@@ -164,11 +170,11 @@ public class Magic : MonoBehaviour {
                 //TODO: resize fireball instead of creating different ones?
                 if (chargeCounter <= LONG_THRESHOLD) {
                     if (chargeCounter > SHORT_THRESHOLD && chargeCounter <= MEDIUM_THRESHOLD) {
-                        CreateObject (MagicType.FireCharge, Size.Medium);
+                        objInCurrFrame = CreateObject (MagicType.FireCharge, Size.Medium);
                     } else if (chargeCounter > MEDIUM_THRESHOLD) {
-                        CreateObject (MagicType.FireCharge, Size.Large);
+                        objInCurrFrame = CreateObject (MagicType.FireCharge, Size.Large);
                     } else {
-                        CreateObject (MagicType.FireCharge, Size.Small);
+                        objInCurrFrame = CreateObject (MagicType.FireCharge, Size.Small);
                     }
 
                     //Debug.Log ("Charging: " + chargeCounter);
@@ -179,16 +185,13 @@ public class Magic : MonoBehaviour {
                     //overloaded, go into cooldown
                 } else {
                     Debug.Log ("Charged too long, in cooldown mode");
-                    Destroy (lastCreatedObj.gameObject); 
-                
                     neutralize ();
                     cd.startCooldown ();
                 }
                 //shoot charged object
             } else if (HandHelper.isFaceForward (mainHand, controller.Frame ()) && chargeCounter > MIN_THRESHOLD) {
                 //TODO: change fireball based on chargedness
-                CreateObject (MagicType.Fireball);
-                lastCreatedObj.name = lastSize.ToString();
+                objInCurrFrame = CreateObject (MagicType.Fireball);
                 Debug.Log ("Shoot fireball");
 
                 neutralize ();
@@ -210,7 +213,7 @@ public class Magic : MonoBehaviour {
                 if (!collided) {
                     foreach (Gesture gesture in controller.Frame().Gestures(controller.Frame(10))) {
                         if (gesture.Type == Gesture.GestureType.TYPE_CIRCLE) {
-                            CreateObject(MagicType.IceWall);
+                            objInCurrFrame = CreateObject(MagicType.IceWall);
                             break;
                         }
                     }

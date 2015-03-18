@@ -9,6 +9,7 @@ public class IceWall : Character {
   	// Use this for initialization
   	void Start () {
         health = 25;
+        totalHealth = 25;
         startScale = this.gameObject.transform.localScale;
         Debug.Log (health);
   	}
@@ -32,6 +33,7 @@ public class IceWall : Character {
         //increment health
         if (chargeCounter > 60) {
             health += 5;
+            totalHealth += 5;
             Debug.Log ("charging ice: " + health);
             chargeCounter = 0;
         }
