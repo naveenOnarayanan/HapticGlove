@@ -6,6 +6,7 @@ public class Enemy : Player
     Animation animation;
     GameObject player;
     int moveCounter = 0;
+    int DIST_THRESHOLD = 50;
 
     Vector3 getPlayerPos() {
         return player.collider.transform.position;
@@ -39,7 +40,7 @@ public class Enemy : Player
         moveCounter++;
 
         //slow down movements
-        if (moveCounter == 10) {
+        if (moveCounter == 5) {
             moveCounter = 0;
 
             Vector3 currPos = transform.position;
@@ -51,11 +52,13 @@ public class Enemy : Player
             //TODO: randomly shoot fireballs
 
             //don't want to get too close
-            if (diff > 10) {
+            if (diff > DIST_THRESHOLD) {
                 animation.Play ("run");
                 Vector3 moveTowards = Vector3.MoveTowards (currPos, playerPos, 0.1f);
                 moveTowards.y = 0;
                 transform.position = moveTowards;
+            } else {
+                animation.Play("idle");
             }
         }
     }
