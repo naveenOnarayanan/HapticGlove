@@ -1,9 +1,11 @@
 public class MagicConstant {
 
     // Tags to find and detect magic on element
+    public static string FIRECHARGE_TAG = "FireCharge";
     public static string FIREBALL_TAG = "Fireball";
     public static string ICEWALL_TAG = "IceWall";
-    public static string ICEWALL_CAST_TAG = "IceCast";
+
+    public static string ICEWALL_CHARGE_SPELLNAME = "IceCharge";
     
     // Magic element resource names
     public static string FIREBALL_SMALL_NAME = "Fire_01";

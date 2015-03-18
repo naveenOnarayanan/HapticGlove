@@ -16,9 +16,9 @@ public class Magic : MonoBehaviour {
     int idleCounter = 0;
 
     int MIN_THRESHOLD = 5;
-    int SHORT_THRESHOLD = 200;
-    int MEDIUM_THRESHOLD = 400;
-    int LONG_THRESHOLD = 600;
+    int SHORT_THRESHOLD = 100;
+    int MEDIUM_THRESHOLD = 200;
+    int LONG_THRESHOLD = 500;
 
     int IDLE_THRESHOLD = 50;
 
@@ -41,6 +41,14 @@ public class Magic : MonoBehaviour {
         Large
     }
 
+    void ClearFirecharges() {
+        GameObject[] objs = GameObject.FindGameObjectsWithTag(MagicConstant.FIRECHARGE_TAG);
+        
+        for (int i = 0; i < objs.Length; i++) {
+            Destroy(objs[i]);
+        }
+    }
+
     GameObject CreateObject(MagicType type) {
         return CreateObject (type, lastSize);
     }
@@ -57,6 +65,11 @@ public class Magic : MonoBehaviour {
             return objInLastFrame;
     		} else {
             string magicType = null;
+
+            //should happen when it's switching sizes of fireball or shooting fireball
+            if (lastCall == MagicType.FireCharge) {
+                ClearFirecharges();
+            }
 
     				switch (type) {
                 case MagicType.FireCharge:
@@ -112,9 +125,7 @@ public class Magic : MonoBehaviour {
   	}
         
     void neutralize() {
-        if (objInLastFrame != null && lastCall == MagicType.FireCharge) {
-            Destroy (objInLastFrame.gameObject); 
-        }
+        ClearFirecharges();
 
         chargeCounter = 0;
         idleCounter = 0;
@@ -167,6 +178,8 @@ public class Magic : MonoBehaviour {
                 canCharge = true;
                 //Debug.Log ("Closed fist");
             } else if (HandHelper.isFaceUp (mainHand, controller.Frame ()) && canCharge) {
+                Debug.Log (chargeCounter);
+
                 //TODO: resize fireball instead of creating different ones?
                 if (chargeCounter <= LONG_THRESHOLD) {
                     if (chargeCounter > SHORT_THRESHOLD && chargeCounter <= MEDIUM_THRESHOLD) {
@@ -204,7 +217,7 @@ public class Magic : MonoBehaviour {
 
                 for (int i = 0; i < hitColliders.Length; i++) {
                     if (hitColliders[i].tag == MagicConstant.ICEWALL_TAG) {
-                        hitColliders[i].SendMessage(MagicConstant.ICEWALL_CAST_TAG);
+                        hitColliders[i].SendMessage(MagicConstant.ICEWALL_CHARGE_SPELLNAME);
                         collided = true;
                     }
                 }
@@ -225,5 +238,6 @@ public class Magic : MonoBehaviour {
         } else {
             idling();
         }
+
     }
 }

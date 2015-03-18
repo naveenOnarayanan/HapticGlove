@@ -22,8 +22,8 @@ public class IceWall : Character {
   	}
     
     //response when ice cast nearby
-    //has to be named same thing as MagicConstant.ICEWALL_CAST_TAG
-    void IceCast() {
+    //has to be named same thing as MagicConstant.ICEWALL_CHARGE_SPELLNAME
+    void IceCharge() {
         chargeCounter++;
 
         //increment size
