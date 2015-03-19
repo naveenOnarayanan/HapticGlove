@@ -137,7 +137,7 @@ public class Magic : MonoBehaviour {
         idleCounter = 0;
         canCharge = false;
 
-        nc.resetPeltier();
+        //nc.resetPeltier();
     }
 
     void idling() {
@@ -203,7 +203,7 @@ public class Magic : MonoBehaviour {
                     //Debug.Log ("Charging: " + chargeCounter);
                 
                     //TODO: differentiate hotness when we have that established
-                    nc.heatPeltier ();
+                    //nc.heatPeltier ();
                     chargeCounter++;
                     //overloaded, go into cooldown
                 } else {
