@@ -6,11 +6,14 @@ using System.Text;
 using UnityEngine;
 
 public class Magic : MonoBehaviour {
-    NetworkController nc;
+    static NetworkController  nc;
     CooldownHelper cd;
 
     Controller controller;
   	Hand mainHand;
+
+    int NETWORK_DELAY = 1;
+    float deltaTime = 5f;
 
   	int chargeCounter = 0;
     int idleCounter = 0;
@@ -149,7 +152,11 @@ public class Magic : MonoBehaviour {
     // Use this for initialization
     void Start () {
     		controller = new Controller ();
-        nc = new NetworkController();
+//        if (Magic.nc == null) {
+//            Magic.nc = new NetworkController();
+//            Magic.nc.stopThread();
+//            Magic.nc.accelGyro();
+//        }
         cd = new CooldownHelper ();
 
         controller.EnableGesture (Gesture.GestureType.TYPE_CIRCLE);
