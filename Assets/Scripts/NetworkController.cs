@@ -6,24 +6,31 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Text;
+using SimpleJSON;
 
 //deals with all the calls to our servers
 public class NetworkController
 {
+    Thread dataThread;
+    UdpClient dataClient;
+
     Socket client;
     IPEndPoint servoServer;
     IPEndPoint peltierServer;
+    IPEndPoint accelGyroServer;
 
     string PELTIER = "peltier";
     string SERVO = "servo";
+    string ACCEL_GYRO = "accel_gyro";
     
     int servoPort = 3000;
     int peltierPort = 3001;
-    string IP = "169.254.191.81";
+    int accelGyroPort = 3002;
+    string IP = "10.22.5.39";
 
     Dictionary<string, IPEndPoint> serverMap;
 
-    bool connected = false;
+    bool connected = true;
 
     //connect to the servers
     public NetworkController() {
@@ -31,6 +38,7 @@ public class NetworkController
 
         servoServer = new IPEndPoint (IPAddress.Parse (IP), servoPort);
         peltierServer = new IPEndPoint (IPAddress.Parse (IP), peltierPort);
+        accelGyroServer = new IPEndPoint (IPAddress.Parse(IP), accelGyroPort);
         client = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
         try {
@@ -40,21 +48,24 @@ public class NetworkController
             //connected = true;
             serverMap["peltier"] = peltierServer;
             serverMap["servo"] = servoServer;
+            serverMap["accel_gyro"] = accelGyroServer;
         } catch {
             connected = false;
         }
     }
     
-    public void sendData(string data, string serverName) {
+    public void sendData(string data, string serverName, bool response = false) {
         if (!connected || !serverMap.ContainsKey(serverName))
             return;
         
         //TODO: process data as json
         Int32 timestamp = (Int32)(DateTime.UtcNow.Subtract (new DateTime (1970, 1, 1))).TotalSeconds;
         string json = "{\"timestamp\":" + timestamp + ", " + data + "}";
+
         byte[] d = Encoding.UTF8.GetBytes (json);
-        
-        client.SendTo (d, d.Length, SocketFlags.None, serverMap[serverName]);
+        //UdpClient receivingClient = new UdpClient(8000);
+        client.SendTo (d, d.Length, SocketFlags.None, (IPEndPoint) serverMap[serverName]);
+
     }
 
     public void resetServo() {
@@ -76,5 +87,81 @@ public class NetworkController
     public void coolPeltier() {
         sendData("\"temperature\": -10", PELTIER);
     }
-}
 
+    public void accelGyro() {
+        dataThread = new Thread(new ThreadStart(readData));
+        dataThread.IsBackground = true;
+        dataThread.Start();
+        //sendData ("\"accel_gyro\":\"null\"", ACCEL_GYRO, true);
+    }
+
+    void OnApplicationQuit() {
+        stopThread();
+    }
+
+    public void stopThread() {
+        if (dataThread != null && dataThread.IsAlive) {
+            dataThread.Abort();
+        }
+        if (dataClient != null) {
+            dataClient.Close();
+        }
+    }
+
+    public void readDefaultData() {
+        dataClient = new UdpClient(8000);
+        while (true) {
+            try {
+                IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, 8000);
+                byte[] data = dataClient.Receive(ref anyIP);
+                string returnData = Encoding.ASCII.GetString(data);
+                JSONNode node = SimpleJSON.JSON.Parse(returnData);
+                int timestamp = node["timestamp"].AsInt;
+                if (UserData.timestamp < timestamp) {
+                    if (node["accel_gyro"] != null) {
+                        if (Application.loadedLevel == 0) {
+                            UserData.accel_gyro_default = new double[]{node["accel_gyro"]["x"].AsDouble, node[ "accel_gyro"]["y"].AsDouble};
+                        } else {
+                            UserData.accel_gyro = new double[]{node["accel_gyro"]["x"].AsDouble, node[ "accel_gyro"]["y"].AsDouble};
+                        }
+                    }
+                    if (node["servo"] != null) {
+                        if (Application.loadedLevel == 0) {
+                            UserData.servo_default = new double[]{node["servo"][0].AsDouble, node[ "servo"][1].AsDouble, node["servo"][2].AsDouble};
+                        } else {
+                            UserData.servo = new double[]{node["servo"][0].AsDouble, node["servo"][1].AsDouble};
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                Debug.Log("Unable to read data");
+            }
+        }
+    }
+
+    public void readData() {
+        dataClient = new UdpClient(8000);
+        while (true) {
+            try {
+                IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, 8000);
+                byte[] data = dataClient.Receive(ref anyIP);
+                string returnData = Encoding.ASCII.GetString(data);
+                JSONNode node = SimpleJSON.JSON.Parse(returnData);
+                int timestamp = node["timestamp"].AsInt;
+                if (UserData.timestamp < timestamp) {
+                    if (node["accel_gyro"] != null) {
+                        UserData.accel_gyro = new double[]{node["accel_gyro"]["x"].AsDouble, node[ "accel_gyro"]["y"].AsDouble};
+                    }
+                    if (node["servo"] != null) {
+                        UserData.servo = new double[]{node["servo"][0].AsDouble, node["servo"][1].AsDouble};
+                    }
+                    UserData.timestamp = timestamp;
+                }
+
+                Debug.Log (UserData.accel_gyro[0] + " " + UserData.accel_gyro[1]);
+            } catch(Exception e) {
+                Debug.Log("Unable to receive data");
+            }
+        }
+    }
+}
