@@ -7,18 +7,22 @@ public class IceWall : Character {
     float scaleFactor = 1.0F;
 
   	// Use this for initialization
-  	void Start () {
-        health = 25;
-        totalHealth = 25;
+  	protected void Start () {
+		health = 25;
+		totalHealth = 25;
+
+		base.Start ();
+        
         startScale = this.gameObject.transform.localScale;
-        Debug.Log (health);
   	}
   	
   	// Update is called once per frame
-  	void Update () {
+  	protected void Update () {
         if (health <= 0) {
               Destroy (this.gameObject);
         }
+
+		base.Update ();
   	}
     
     //response when ice cast nearby

@@ -12,11 +12,11 @@ public class Character : MonoBehaviour {
     const int MED_DMG = 50;
     const int LARGE_DMG = 75;
 
-    void Start () {
+    protected void Start () {
         //TODO: create health bar
     }
 
-    void Update() {
+    protected void Update() {
         //TODO: update location of health bar relative to camera
         //Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(Camera.main, cameraTrans.position);
         //healthBar.anchoredPosition = screenPoint - canvasRectT.sizeDelta / 2f;

@@ -59,7 +59,7 @@ public class Magic : MonoBehaviour {
     }
 
   	GameObject CreateObject(MagicType type, Size size) {
-    		Vector3 vector = mainHand.PalmPosition.ToUnityScaled ();
+    	Vector3 vector = mainHand.PalmPosition.ToUnityScaled ();
         Quaternion rotation = Camera.main.transform.rotation;
             
         //if same obj in last frame, then just move it
@@ -170,11 +170,12 @@ public class Magic : MonoBehaviour {
         objInCurrFrame = null;
 
         //testing purposes
-        if (Input.GetKeyDown(KeyCode.I))
-        {
+        if (Input.GetKeyDown(KeyCode.I)) {
             objInCurrFrame = CreateObject(MagicType.IceWall);
-            return;
         }
+		if (Input.GetKeyDown (KeyCode.F)) {
+			objInCurrFrame = CreateObject (MagicType.Fireball);
+		}
         
         //Debug.Log (HandHelper.isFaceForward(mainHand, controller.Frame()) + " " + mainHand.Direction + ":" + mainHand.PalmNormal);
 
@@ -215,7 +216,6 @@ public class Magic : MonoBehaviour {
             } else if (HandHelper.isFaceForward (mainHand, controller.Frame ()) && chargeCounter > MIN_THRESHOLD) {
                 //TODO: change fireball based on chargedness
                 objInCurrFrame = CreateObject (MagicType.Fireball);
-                Debug.Log ("Shoot fireball");
 
                 neutralize ();
                 //charge ice wall

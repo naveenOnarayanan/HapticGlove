@@ -75,8 +75,10 @@ public class Enemy : Player
     }
 
     // Use this for initialization
-    void Start ()
+    protected void Start ()
     {
+		base.Start ();
+
         animation = this.GetComponent<Animation> ();
         animate("crouch");
 		//give the player a sec to get started
@@ -86,8 +88,10 @@ public class Enemy : Player
     }
 	
     // Update is called once per frame
-    void Update ()
+    protected void Update ()
     {
+		base.Update ();
+
         moveCounter++;
 
         //testing purposes
@@ -114,10 +118,10 @@ public class Enemy : Player
                     Run(playerPos);
                 } else if (intersectionLength < playerLength) {
                     //obstacle in the way, potentially destroy it / turn away from it
-					ShootFireball(3);
+					ShootFireball(5);
                     TurnAway();
                 } else {
-                    ShootFireball(5);
+                    ShootFireball(10);
                     Run(playerPos);
                 }
             } else {
@@ -126,11 +130,11 @@ public class Enemy : Player
 					Run(transform.position + transform.forward);
 					TurnTowards();
                 } else if (intersectionLength < playerLength) {
-					ShootFireball(3);
+					ShootFireball(5);
 					TurnAway();
 				} else {
                     //randomly shoot fireballs towards player since facing him
-                    ShootFireball(5);
+                    ShootFireball(10);
 					animate("idle");
                 }
             } 

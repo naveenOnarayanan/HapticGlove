@@ -5,18 +5,23 @@ public class Player : Character {
   //private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
 
 	// Use this for initialization
-	void Start () {
-        health = 200;
-        totalHealth = 200;
-        Debug.Log (health);
+	protected void Start () {
+        health = 100;
+        totalHealth = 100;
+
+		base.Start ();
+	}
+
+	protected void CheckGameOver() {
+		if (health <= 0) {
+			Application.LoadLevel("replay");
+		}
 	}
 	
 	// Update is called once per frame
-	void Update () {
-      if (health <= 0) {
-            Debug.Log ("game over");
-            //TODO: end game
+	protected void Update () {
+		CheckGameOver();
 
-      }
+		base.Update ();
 	}
 }
