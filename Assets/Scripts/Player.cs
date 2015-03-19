@@ -14,7 +14,8 @@ public class Player : Character {
 
 	protected void CheckGameOver() {
 		if (health <= 0) {
-			Application.LoadLevel("replay");
+			MagicConstant.LOSER = this.name;
+			Application.LoadLevel(MagicConstant.REPLAY_LEVEL);
 		}
 	}
 	

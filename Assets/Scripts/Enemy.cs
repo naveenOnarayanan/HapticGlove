@@ -26,7 +26,7 @@ public class Enemy : Player
 			//lift it off the floor
 			Vector3 pos = transform.position + transform.up + (2 * transform.forward);
 			GameObject fireball = (GameObject)Instantiate (Resources.Load (MagicConstant.FIREBALL_RELEASE_NAME), pos, transform.rotation);
-			fireball.name = "Small";
+			fireball.name = MagicConstant.FIRECHARGE_SMALL_NAME;
 			Destroy (fireball, 10);
 		}
     }
@@ -38,7 +38,7 @@ public class Enemy : Player
     }
 
     void Run(Vector3 towards) {
-        animate("run");
+        animate(MagicConstant.RUN_ANIM);
         Vector3 moveTowards = Vector3.MoveTowards (transform.position, towards, RUN_SPEED);
         moveTowards.y = 0;
         transform.position = moveTowards;
@@ -80,11 +80,11 @@ public class Enemy : Player
 		base.Start ();
 
         animation = this.GetComponent<Animation> ();
-        animate("crouch");
+        animate(MagicConstant.CROUCH_ANIM);
 		//give the player a sec to get started
 		moveCounter = -60;
 
-        player = GameObject.Find ("player");
+        player = GameObject.Find (MagicConstant.PLAYER);
     }
 	
     // Update is called once per frame
@@ -135,7 +135,7 @@ public class Enemy : Player
 				} else {
                     //randomly shoot fireballs towards player since facing him
                     ShootFireball(10);
-					animate("idle");
+					animate(MagicConstant.IDLE_ANIM);
                 }
             } 
         }

@@ -118,6 +118,7 @@
      <Compile Include="Assets\Scripts\NetworkController.cs" />
      <Compile Include="Assets\Scripts\ParticleHelper.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
+     <Compile Include="Assets\Scripts\ReplayMenu.cs" />
      <Compile Include="Assets\Scripts\ReticleMovement.cs" />
      <Compile Include="Assets\Scripts\ScreenFader.cs" />
      <Compile Include="Assets\Scripts\Sprinkler.cs" />

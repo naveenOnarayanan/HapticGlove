@@ -29,13 +29,13 @@ public class Character : MonoBehaviour {
             int dmg = 0;
 
             switch (collision.name) {
-              case "Small":
+              case MagicConstant.FIRECHARGE_SMALL_NAME:
                   dmg = SMALL_DMG;
                   break;
-              case "Medium":
+              case MagicConstant.FIRECHARGE_MEDIUM_NAME:
                   dmg = MED_DMG;
                   break;
-              case "Large":
+              case MagicConstant.FIRECHARGE_LARGE_NAME:
                   dmg = LARGE_DMG;
                   break;
               default:
