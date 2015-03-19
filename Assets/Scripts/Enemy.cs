@@ -1,12 +1,17 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
 public class Enemy : Player
 {
     Animation animation;
     GameObject player;
     int moveCounter = 0;
+
+    int FIREBALL_CHANCE = 3; //1 in X chance to shoot fireball
     int DIST_THRESHOLD = 50;
+
+    System.Random rng = new System.Random();
 
     Vector3 getPlayerPos() {
         return player.transform.position;
@@ -19,18 +24,43 @@ public class Enemy : Player
         fireball.name = "Small";
         Destroy (fireball, 10);
     }
+    
+    void animate(string move) {
+        if (!animation.IsPlaying (move)) {
+            animation.Play(move);
+        }
+    }
 
-    //TODO: fix this
-    bool InLineOfSight() {
+    void Run() {
+        animate("run");
+        Vector3 moveTowards = Vector3.MoveTowards (transform.position, getPlayerPos(), 0.2f);
+        moveTowards.y = 0;
+        transform.position = moveTowards;
+    }
+
+    void TurnTowards() {
+        Vector3 playerPos = getPlayerPos();
+        playerPos.y = 0;
+        Quaternion rotation = Quaternion.LookRotation(playerPos - transform.position);
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime);
+    }
+
+    //twice the turning of turnTowards
+    void TurnAway() {
+
+    }
+
+    //returns infinity if no intersection
+    Vector3 LineOfSightIntersection() {
         RaycastHit hit;
         Vector3 pos = transform.position + transform.up + transform.forward;
-        Vector3 dir = transform.rotation.eulerAngles;
-        Debug.Log (pos);
+        Vector3 dir = transform.TransformDirection(Vector3.forward);
 
         if (Physics.Raycast(pos, dir, out hit)) {
-            return hit.transform.position == getPlayerPos();
+            return hit.transform.position;
         } else {
-            return false;
+            return new Vector3(Mathf.Infinity, Mathf.Infinity, Mathf.Infinity);
         }
     }
 
@@ -38,7 +68,7 @@ public class Enemy : Player
     void Start ()
     {
         animation = this.GetComponent<Animation> ();
-        animation.Play ("crouch");
+        animate("crouch");
 
         player = GameObject.Find ("player");
     }
@@ -58,31 +88,44 @@ public class Enemy : Player
         if (moveCounter == 5) {
             moveCounter = 0;
 
-            Vector3 currPos = transform.position;
-            Vector3 playerPos = getPlayerPos ();
-            float diff = (currPos - playerPos).sqrMagnitude;
+            Vector3 playerPos = getPlayerPos();
+            float diff = (transform.position - playerPos).sqrMagnitude;
 
-            //TODO:
-            /*
-              if ray magnitude is farther than opponent, turn or run
-              if ray is less than opponent, there's an obstacle, so turn 
-              if ray is same as opponent
-                if opponent is father than distance threshold, run towards them + randomly shoot fireballs
-                if same as distance threshold, strafe
-                if less than distance threshold, back up
-            */
-
-            Debug.Log(InLineOfSight());
-
-            //don't want to get too close
+            Vector3 intersection = LineOfSightIntersection();
+            float intersectionLength = intersection.sqrMagnitude;
+            float playerLength = playerPos.sqrMagnitude;
+            
             if (diff > DIST_THRESHOLD) {
-                animation.Play ("run");
-                Vector3 moveTowards = Vector3.MoveTowards (currPos, playerPos, 0.2f);
-                moveTowards.y = 0;
-                transform.position = moveTowards;
+                //approach player
+                if (intersectionLength > playerLength) {
+                    TurnTowards();
+                    Run();
+                } else if (intersectionLength < playerLength) {
+                    //obstacle in the way
+                    TurnAway();
+                } else {
+                    //randomly shoot fireballs towards player since facing him
+                    int rand = rng.Next(20);
+                    if (rand == 0) {
+                        ShootFireball();
+                    }
+
+                    Run();
+                }
             } else {
-                animation.Play("idle");
-            }
+                //don't want to get too close, so only turn
+                if (intersectionLength > playerLength) {
+                    TurnTowards();
+                } else if (intersectionLength == playerLength) {
+                    //randomly shoot fireballs towards player since facing him
+                    int rand = rng.Next(20);
+                    if (rand == 0) {
+                        ShootFireball();
+                    }
+                }
+
+                animate("idle");
+            } 
         }
     }
 }
