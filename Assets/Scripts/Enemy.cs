@@ -9,20 +9,29 @@ public class Enemy : Player
     int DIST_THRESHOLD = 50;
 
     Vector3 getPlayerPos() {
-        return player.collider.transform.position;
+        return player.transform.position;
     }
 
-    //TODO: this is currently incorrect
-    Quaternion getPlayerDir() {
-        Vector3 change =  getPlayerPos ();
-        return Quaternion.Euler (change);
-    }
-
-    void shootFireball() {
-        Quaternion dir = getPlayerDir ();
+    void ShootFireball() {
         //lift it off the floor
-        Vector3 pos = transform.position + transform.forward;
-        Instantiate(Resources.Load (MagicConstant.FIREBALL_RELEASE_NAME), pos, dir);
+        Vector3 pos = transform.position + transform.up + (2 * transform.forward);
+        GameObject fireball = (GameObject)Instantiate(Resources.Load (MagicConstant.FIREBALL_RELEASE_NAME), pos, transform.rotation);
+        fireball.name = "Small";
+        Destroy (fireball, 10);
+    }
+
+    //TODO: fix this
+    bool InLineOfSight() {
+        RaycastHit hit;
+        Vector3 pos = transform.position + transform.up + transform.forward;
+        Vector3 dir = transform.rotation.eulerAngles;
+        Debug.Log (pos);
+
+        if (Physics.Raycast(pos, dir, out hit)) {
+            return hit.transform.position == getPlayerPos();
+        } else {
+            return false;
+        }
     }
 
     // Use this for initialization
@@ -39,6 +48,12 @@ public class Enemy : Player
     {
         moveCounter++;
 
+        //testing purposes
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            ShootFireball();
+        }
+
         //slow down movements
         if (moveCounter == 5) {
             moveCounter = 0;
@@ -47,14 +62,22 @@ public class Enemy : Player
             Vector3 playerPos = getPlayerPos ();
             float diff = (currPos - playerPos).sqrMagnitude;
 
-            //TODO: rotate if not in line of sight, only run when facing you
-            //TODO: run around walls instead of through them
-            //TODO: randomly shoot fireballs
+            //TODO:
+            /*
+              if ray magnitude is farther than opponent, turn or run
+              if ray is less than opponent, there's an obstacle, so turn 
+              if ray is same as opponent
+                if opponent is father than distance threshold, run towards them + randomly shoot fireballs
+                if same as distance threshold, strafe
+                if less than distance threshold, back up
+            */
+
+            Debug.Log(InLineOfSight());
 
             //don't want to get too close
             if (diff > DIST_THRESHOLD) {
                 animation.Play ("run");
-                Vector3 moveTowards = Vector3.MoveTowards (currPos, playerPos, 0.1f);
+                Vector3 moveTowards = Vector3.MoveTowards (currPos, playerPos, 0.2f);
                 moveTowards.y = 0;
                 transform.position = moveTowards;
             } else {

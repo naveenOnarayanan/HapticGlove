@@ -110,6 +110,7 @@ public class Magic : MonoBehaviour {
             switch (type) {
                 case MagicType.Fireball:
                     objInCurrFrame.name = lastSize.ToString();
+                    Destroy(objInCurrFrame, 10);
                     break;
                 case MagicType.IceWall:
                     Vector3 rotate = new Vector3(-90, 0, 0);
