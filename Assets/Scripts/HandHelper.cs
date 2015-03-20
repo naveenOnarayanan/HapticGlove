@@ -17,11 +17,17 @@ public static class HandHelper {
         }
         */
         
-        return hand.Direction.y > 0.5 && hand.PalmNormal.y < 0 && hand.PalmNormal.z < 0 && fingerFlat;
+        bool fromLeap = hand.Direction.y > 0.5 && hand.PalmNormal.y < 0 && hand.PalmNormal.z < 0 && fingerFlat;
+		bool fromSensors = UserData.isFaceUp();
+
+		return fromLeap || fromSensors;
     }
 
     public static bool isFaceForward(Hand hand, Frame frame) {
-        return hand.PalmNormal.y > 0.8 && hand.PalmNormal.z > -0.2 && hand.PalmNormal.z < 0.5;
+		bool fromLeap = hand.PalmNormal.y > 0.8 && hand.PalmNormal.z > -0.2 && hand.PalmNormal.z < 0.5;
+		bool fromSensors = UserData.isFaceForward();
+		
+		return fromLeap || fromSensors;
     }
 
     static int getExtendedFingers(Hand hand) {
@@ -37,6 +43,9 @@ public static class HandHelper {
     }
 
     public static bool isClosedFist(Hand hand) {
-        return getExtendedFingers(hand) == 0;
+		bool fromLeap = getExtendedFingers(hand) == 0;
+		bool fromSensors = UserData.isClosedFist();
+		
+		return fromLeap || fromSensors;
     }
 }

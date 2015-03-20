@@ -75,25 +75,40 @@ public class NetworkController : MonoBehaviour
         client.SendTo (d, d.Length, SocketFlags.None, (IPEndPoint) serverMap[serverName]);
 
     }
-
+	
+	//TODO: set this to be pulling to neutral
     public void resetServo() {
         sendData ("\"angle\": 0", SERVO);
     }
 
+	//TODO: set this to be pulling to taught
     public void pullServo() {
         sendData ("\"angle\": 180", SERVO);
     }
-
+	
     public void resetPeltier() {
         sendData("\"temperature\": 0", PELTIER);
     }
 
-    public void heatPeltier() {
-        sendData("\"temperature\": 10", PELTIER);
+    public void heatPeltier(Magic.Size size) {
+		int temp;
+
+		switch (size) {
+			case Magic.Size.Small:
+				temp = 5;
+				break;
+			case Magic.Size.Medium:
+				temp = 10;
+				break;
+			default:
+				temp = 15;
+				break;
+		}
+        sendData("\"temperature\": " +  temp.ToString(), PELTIER);
     }
 
     public void coolPeltier() {
-        sendData("\"temperature\": -10", PELTIER);
+        sendData("\"temperature\": -15", PELTIER);
     }
 
     public void accelGyro() {

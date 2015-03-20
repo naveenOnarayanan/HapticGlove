@@ -8,10 +8,16 @@ public class Enemy : Player
     GameObject player;
     int moveCounter = 0;
 
+	int CHANCE_ATTACK_ICE = 5;
+	int CHANCE_ATTACK_PLAYER = 20;
+
 	int MOVE_THRESHOLD = 5;
     int DIST_THRESHOLD = 50;
+
 	float TURN_SPEED = 0.2f;
 	float RUN_SPEED = 0.2f;
+
+	int WAIT_TIME = -100;
 
     System.Random rng = new System.Random();
 
@@ -82,7 +88,7 @@ public class Enemy : Player
         animation = this.GetComponent<Animation> ();
         animate(MagicConstant.CROUCH_ANIM);
 		//give the player a sec to get started
-		moveCounter = -60;
+		moveCounter = WAIT_TIME;
 
         player = GameObject.Find (MagicConstant.PLAYER);
     }
@@ -118,11 +124,11 @@ public class Enemy : Player
                     Run(playerPos);
                 } else if (intersectionLength < playerLength) {
                     //obstacle in the way, potentially destroy it / turn away from it
-					ShootFireball(5);
+					ShootFireball(CHANCE_ATTACK_ICE);
                     TurnAway();
                 } else {
-                    ShootFireball(10);
-                    Run(playerPos);
+					ShootFireball(CHANCE_ATTACK_PLAYER);
+					Run(playerPos);
                 }
             } else {
                 //don't want to get too close, so only turn
@@ -130,11 +136,11 @@ public class Enemy : Player
 					Run(transform.position + transform.forward);
 					TurnTowards();
                 } else if (intersectionLength < playerLength) {
-					ShootFireball(5);
+					ShootFireball(CHANCE_ATTACK_ICE);
 					TurnAway();
 				} else {
                     //randomly shoot fireballs towards player since facing him
-                    ShootFireball(10);
+					ShootFireball(CHANCE_ATTACK_PLAYER);
 					animate(MagicConstant.IDLE_ANIM);
                 }
             } 

@@ -34,13 +34,13 @@ public class Magic : MonoBehaviour {
 
     bool canCharge = false;
 
-  	enum MagicType {
+  	public enum MagicType {
   		FireCharge,
   		Fireball,
-      IceWall
+      	IceWall
   	};
 
-    enum Size {
+    public enum Size {
         Small,
         Medium,
         Large
@@ -182,12 +182,11 @@ public class Magic : MonoBehaviour {
         //cooling down, don't do anything else
         if (cd.coolingDown (nc)) {
             neutralize ();
-            //TODO: have this work based on data from servo motor
         //hand stuff
         } else if (mainHand != null && mainHand.IsValid) {
             if (HandHelper.isClosedFist(mainHand)) {
+				nc.resetServo();
                 canCharge = true;
-                //Debug.Log ("Closed fist");
             } else if (HandHelper.isFaceUp (mainHand, controller.Frame ()) && canCharge) {
                 Debug.Log (chargeCounter);
 
@@ -202,8 +201,7 @@ public class Magic : MonoBehaviour {
 
                     //Debug.Log ("Charging: " + chargeCounter);
                 
-                    //TODO: differentiate hotness when we have that established
-                    //nc.heatPeltier ();
+                    nc.heatPeltier(lastSize);
                     chargeCounter++;
                     //overloaded, go into cooldown
                 } else {

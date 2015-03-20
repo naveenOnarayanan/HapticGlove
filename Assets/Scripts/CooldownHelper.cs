@@ -16,7 +16,6 @@ public class CooldownHelper {
         //cooldown mode, don't let it do anything else
         if (cooldownCounter > 0 && cooldownCounter < COOLDOWN_THRESHOLD) {
             //pull fingers taught
-            //TODO: force fist closed?
             nc.pullServo();
 
             cooldownCounter++;
