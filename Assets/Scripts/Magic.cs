@@ -80,13 +80,13 @@ public class Magic : MonoBehaviour {
                 case MagicType.FireCharge:
                     switch (size) {
                       case Size.Small:
-                          magicType = MagicConstant.FIREBALL_SMALL_NAME;                       
+                          magicType = MagicConstant.FIRECHARGE_SMALL_NAME;                       
                           break;
                       case Size.Medium:
-                          magicType = MagicConstant.FIREBALL_MEDIUM_NAME;
+                          magicType = MagicConstant.FIRECHARGE_MEDIUM_NAME;
                           break;
                       case Size.Large:
-                          magicType = MagicConstant.FIREBALL_LARGE_NAME;
+                          magicType = MagicConstant.FIRECHARGE_LARGE_NAME;
                           break;
                     }
                     vector = transform.TransformPoint(vector);
@@ -191,7 +191,6 @@ public class Magic : MonoBehaviour {
             } else if (HandHelper.isFaceUp (mainHand, controller.Frame ()) && canCharge) {
                 Debug.Log (chargeCounter);
 
-                //TODO: resize fireball instead of creating different ones?
                 if (chargeCounter <= LONG_THRESHOLD) {
                     if (chargeCounter > SHORT_THRESHOLD && chargeCounter <= MEDIUM_THRESHOLD) {
                         objInCurrFrame = CreateObject (MagicType.FireCharge, Size.Medium);
@@ -214,7 +213,6 @@ public class Magic : MonoBehaviour {
                 }
                 //shoot charged object
             } else if (HandHelper.isFaceForward (mainHand, controller.Frame ()) && chargeCounter > MIN_THRESHOLD) {
-                //TODO: change fireball based on chargedness
                 objInCurrFrame = CreateObject (MagicType.Fireball);
 
                 neutralize ();

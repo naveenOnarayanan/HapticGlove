@@ -26,7 +26,7 @@ public class Enemy : Player
 			//lift it off the floor
 			Vector3 pos = transform.position + transform.up + (2 * transform.forward);
 			GameObject fireball = (GameObject)Instantiate (Resources.Load (MagicConstant.FIREBALL_RELEASE_NAME), pos, transform.rotation);
-			fireball.name = MagicConstant.FIRECHARGE_SMALL_NAME;
+			fireball.name = MagicConstant.FIREBALL_SMALL_NAME;
 			Destroy (fireball, 10);
 		}
     }
