@@ -9,9 +9,10 @@ using System.Text;
 using SimpleJSON;
 
 //deals with all the calls to our servers
-public class NetworkController
+public class NetworkController : MonoBehaviour
 {
-    Thread dataThread;
+	private static NetworkController ncInstance;
+	Thread dataThread;
     UdpClient dataClient;
 
     Socket client;
@@ -19,18 +20,25 @@ public class NetworkController
     IPEndPoint peltierServer;
     IPEndPoint accelGyroServer;
 
-    string PELTIER = "peltier";
-    string SERVO = "servo";
-    string ACCEL_GYRO = "accel_gyro";
+    public static string PELTIER = "peltier";
+	public static string SERVO = "servo";
+	public static string ACCEL_GYRO = "accel_gyro";
     
     int servoPort = 3000;
     int peltierPort = 3001;
     int accelGyroPort = 3002;
-    string IP = "10.22.5.39";
+    string IP = "10.22.78.165";
 
     Dictionary<string, IPEndPoint> serverMap;
 
     bool connected = true;
+
+	public static NetworkController instance() {
+		if (NetworkController.ncInstance == null) {
+			NetworkController.ncInstance = new NetworkController();
+		}
+		return NetworkController.ncInstance;
+	}
 
     //connect to the servers
     public NetworkController() {
@@ -54,7 +62,7 @@ public class NetworkController
         }
     }
     
-    public void sendData(string data, string serverName, bool response = false) {
+    public void sendData(string data, string serverName) {
         if (!connected || !serverMap.ContainsKey(serverName))
             return;
         
@@ -68,7 +76,7 @@ public class NetworkController
 
     }
 
-    public void resetServo() {
+    public void resetServo(int servoNum) {
         sendData ("\"angle\": 0", SERVO);
     }
 
@@ -96,7 +104,7 @@ public class NetworkController
     }
 
     void OnApplicationQuit() {
-        stopThread();
+		stopThread();
     }
 
     public void stopThread() {
@@ -158,7 +166,7 @@ public class NetworkController
                     UserData.timestamp = timestamp;
                 }
 
-                Debug.Log (UserData.accel_gyro[0] + " " + UserData.accel_gyro[1]);
+                Debug.Log (returnData);
             } catch(Exception e) {
                 Debug.Log("Unable to receive data");
             }

@@ -7,7 +7,8 @@ public class ExplanationControl : MonoBehaviour {
     const float EXPLANATION_TIME = 5f;
     int counter = 0;
     float deltaTime = 5f;
-    bool continueInstructions = false;
+    bool continueInstructions = true;
+	private NetworkController nc;
 
     class Explanation {
         public string explanationTxtL1 = "";
@@ -28,6 +29,12 @@ public class ExplanationControl : MonoBehaviour {
 
     List<Explanation> explanations = new List<Explanation>();
 
+	void OnApplicationQuit() {
+		if (nc != null) {
+			nc.stopThread();
+		}
+	}
+
   	void Start () {
         GameObject explanationTextL1 = GameObject.FindGameObjectWithTag ("ExplanationText_L1");
         GameObject explanationTextL2 = GameObject.FindGameObjectWithTag ("ExplanationText_L2");
@@ -39,11 +46,19 @@ public class ExplanationControl : MonoBehaviour {
         ));
         explanations.Add (new Explanation("Please make a fist!", new Vector3(-8.111927f, 7.41565f), null, new Vector3(0, 0)));
         explanations.Add (new Explanation("Open your palm!", new Vector3(-6.425037f, 7.897055f), null, new Vector3(0, 0)));
+		explanations.Add (new Explanation("Face you palm", new Vector3(-6.425037f, 7.897055f), "to the ceiling", new Vector3(-6.437281f, 4.92359f)));
+		explanations.Add (new Explanation("Face you palm", new Vector3(-6.425037f, 7.897055f), "to the floor", new Vector3(-6.437281f, 4.92359f)));
+		nc = NetworkController.instance();
+		nc.accelGyro();
     }
   	// Update is called once per frame
   	void Update () {
-        deltaTime -= Time.deltaTime;
-        if (deltaTime < 0 && (counter <= 2 || continueInstructions)) {
+		deltaTime -= Time.deltaTime;
+        if (deltaTime < 0 && continueInstructions) {
+			if (counter >= 5) {
+				Application.LoadLevel(Application.loadedLevel + 1);
+				return;
+			}
             // Find two explanation text lines
             GameObject explanationTextL1 = GameObject.FindGameObjectWithTag ("ExplanationText_L1");
             GameObject explanationTextL2 = GameObject.FindGameObjectWithTag ("ExplanationText_L2");
@@ -60,10 +75,43 @@ public class ExplanationControl : MonoBehaviour {
 
             deltaTime = EXPLANATION_TIME;
             counter = counter + 1;
-        }
-        if (counter >= 3) {
-            Application.LoadLevel(Application.loadedLevel + 1);
+
+			// Prevents text from changing until we receive calibrated values from the game
+			if (counter > 1) {
+				continueInstructions = false;
+			}
         }
 
+		// Reset bottom motor for closed fist
+		if (counter == 2) {;
+			if (deltaTime < 0) {
+				nc.sendData ("\"angle\": 0, \"motor\": \"under\"", NetworkController.SERVO);
+				deltaTime = 3f;
+				continueInstructions = true;
+			}
+		}
+		// Reset top 2 motors for Open palm
+		else if (counter == 3) {
+			if (deltaTime < 0) {
+				nc.sendData ("\"angle\": 0, \"motor\": \"finger\"", NetworkController.SERVO);
+				nc.sendData ("\"angle\": 0, \"motor\": \"thumb\"", NetworkController.SERVO);
+				deltaTime = 3f;
+				continueInstructions = true;
+			}
+		}
+		// Open palm facing up
+		else if (counter == 4) {
+			if (deltaTime < 0) {
+				deltaTime = 3f;
+				continueInstructions = true;
+			}
+		}
+		// Open palm facing down
+		else if (counter == 5) {
+			if (deltaTime < 0) {
+				deltaTime = 3f;
+				continueInstructions = true;
+			}
+		}
   	}
 }
