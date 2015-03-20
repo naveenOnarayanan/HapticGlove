@@ -75,15 +75,19 @@ public class NetworkController : MonoBehaviour
         client.SendTo (d, d.Length, SocketFlags.None, (IPEndPoint) serverMap[serverName]);
 
     }
-	
-	//TODO: set this to be pulling to neutral
-    public void resetServo() {
-        sendData ("\"angle\": 0", SERVO);
+
+    public void resetBottomServo() {
+		sendData ("\"angle\": 0, \"motor\": \"under\"", SERVO);
     }
 
-	//TODO: set this to be pulling to taught
+	public void resetTopServo() {
+		sendData ("\"angle\": 0, \"motor\": \"finger\"", SERVO);
+		sendData ("\"angle\": 0, \"motor\": \"thumb\"", SERVO);
+	}
+
     public void pullServo() {
-        sendData ("\"angle\": 180", SERVO);
+		sendData ("\"angle\": 180, \"motor\": \"finger\"", SERVO);
+		sendData ("\"angle\": 180, \"motor\": \"thumb\"", SERVO);
     }
 	
     public void resetPeltier() {

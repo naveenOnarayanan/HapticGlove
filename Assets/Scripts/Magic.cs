@@ -185,7 +185,7 @@ public class Magic : MonoBehaviour {
         //hand stuff
         } else if (mainHand != null && mainHand.IsValid) {
             if (HandHelper.isClosedFist(mainHand)) {
-				nc.resetServo();
+				nc.resetBottomServo();
                 canCharge = true;
             } else if (HandHelper.isFaceUp (mainHand, controller.Frame ()) && canCharge) {
                 Debug.Log (chargeCounter);

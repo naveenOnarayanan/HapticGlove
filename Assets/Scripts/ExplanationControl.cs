@@ -96,7 +96,7 @@ public class ExplanationControl : MonoBehaviour {
 		// Reset bottom motor for closed fist
 		if (counter == 2) {
 			if (ReadyForThisInstr()) {
-				nc.sendData ("\"angle\": 0, \"motor\": \"under\"", NetworkController.SERVO);
+				nc.resetBottomServo();
 				deltaTime = 3f;
 				continueInstructions = true;
 			}
@@ -108,8 +108,7 @@ public class ExplanationControl : MonoBehaviour {
 		// Reset top 2 motors for Open palm
 		else if (counter == 3) {
 			if (ReadyForThisInstr()) {
-				nc.sendData ("\"angle\": 0, \"motor\": \"finger\"", NetworkController.SERVO);
-				nc.sendData ("\"angle\": 0, \"motor\": \"thumb\"", NetworkController.SERVO);
+				nc.resetTopServo();
 				deltaTime = 3f;
 				continueInstructions = true;
 			}
