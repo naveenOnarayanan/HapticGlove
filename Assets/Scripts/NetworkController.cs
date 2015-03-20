@@ -76,7 +76,7 @@ public class NetworkController : MonoBehaviour
 
     }
 
-    public void resetServo(int servoNum) {
+    public void resetServo() {
         sendData ("\"angle\": 0", SERVO);
     }
 
@@ -113,37 +113,6 @@ public class NetworkController : MonoBehaviour
         }
         if (dataClient != null) {
             dataClient.Close();
-        }
-    }
-
-    public void readDefaultData() {
-        dataClient = new UdpClient(8000);
-        while (true) {
-            try {
-                IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, 8000);
-                byte[] data = dataClient.Receive(ref anyIP);
-                string returnData = Encoding.ASCII.GetString(data);
-                JSONNode node = SimpleJSON.JSON.Parse(returnData);
-                int timestamp = node["timestamp"].AsInt;
-                if (UserData.timestamp < timestamp) {
-                    if (node["accel_gyro"] != null) {
-                        if (Application.loadedLevel == 0) {
-                            UserData.accel_gyro_default = new double[]{node["accel_gyro"]["x"].AsDouble, node[ "accel_gyro"]["y"].AsDouble};
-                        } else {
-                            UserData.accel_gyro = new double[]{node["accel_gyro"]["x"].AsDouble, node[ "accel_gyro"]["y"].AsDouble};
-                        }
-                    }
-                    if (node["servo"] != null) {
-                        if (Application.loadedLevel == 0) {
-                            UserData.servo_default = new double[]{node["servo"][0].AsDouble, node[ "servo"][1].AsDouble, node["servo"][2].AsDouble};
-                        } else {
-                            UserData.servo = new double[]{node["servo"][0].AsDouble, node["servo"][1].AsDouble};
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                Debug.Log("Unable to read data");
-            }
         }
     }
 
