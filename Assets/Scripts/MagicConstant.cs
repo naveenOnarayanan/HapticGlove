@@ -29,6 +29,7 @@ public class MagicConstant {
 	//scene names
 	public const string REPLAY_LEVEL = "replay";
 	public const string GAME_LEVEL = "game";
+	public const string TUTORIAL_LEVEL = "tutorial";
 
 	//enemy animation names
 	public const string CROUCH_ANIM = "crouch";

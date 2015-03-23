@@ -8,8 +8,14 @@ public class Enemy : Player
     GameObject player;
     int moveCounter = 0;
 
+	int STARTING_HEALTH = 100;
+
 	int CHANCE_ATTACK_ICE = 5;
-	int chanceAttackPlayer = 100;
+	int EASY_CHANCE_ATTACK = 100;
+	int MED_CHANCE_ATTACK = 40;
+	int HARD_CHANCE_ATTACK = 20;
+
+	int chanceAttackPlayer;
 
 	int MOVE_THRESHOLD = 5;
     int DIST_THRESHOLD = 50;
@@ -85,10 +91,15 @@ public class Enemy : Player
     {
 		base.Start ();
 
+		health = STARTING_HEALTH;
+		totalHealth = STARTING_HEALTH;
+
         animation = this.GetComponent<Animation> ();
         animate(MagicConstant.CROUCH_ANIM);
 		//give the player a sec to get started
 		moveCounter = WAIT_TIME;
+
+		chanceAttackPlayer = EASY_CHANCE_ATTACK;
 
         player = GameObject.Find (MagicConstant.PLAYER);
     }
@@ -107,12 +118,10 @@ public class Enemy : Player
         }
 
 		//ramp up difficulty of AI
-		if (health < 100 && health > 50 && chanceAttackPlayer != 20) {
-			Debug.Log ("was " + chanceAttackPlayer);
-			chanceAttackPlayer = 40;
-		} else if (health <= 50 && chanceAttackPlayer != 10) {
-			Debug.Log ("was " + chanceAttackPlayer);
-			chanceAttackPlayer = 20;
+		if (health < STARTING_HEALTH && health > 50 && chanceAttackPlayer != MED_CHANCE_ATTACK) {
+			chanceAttackPlayer = MED_CHANCE_ATTACK;
+		} else if (health <= 50 && chanceAttackPlayer != HARD_CHANCE_ATTACK) {
+			chanceAttackPlayer = HARD_CHANCE_ATTACK;
 		}
 
         //slow down movements

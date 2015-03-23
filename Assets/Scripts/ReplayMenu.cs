@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class ReplayMenu : Menu
+public class ReplayMenu : MonoBehaviour
 {
 	string winner;
 
@@ -16,6 +16,15 @@ public class ReplayMenu : Menu
 		winnerText.text = winner;
 	}
 
-	//TODO: also add a redo tutorial button
+	void OnParticleCollision(GameObject gameObj) {
+		if (gameObj.tag == MagicConstant.FIREBALL_TAG) {
+			if (gameObj.transform.position.x > 0) {
+				Application.LoadLevel(MagicConstant.TUTORIAL_LEVEL);
+			} else {
+				Application.LoadLevel(MagicConstant.GAME_LEVEL);
+
+			}
+		}
+	}
 }
 

@@ -6,8 +6,8 @@ public class Player : Character {
 
 	// Use this for initialization
 	protected void Start () {
-        health = 100;
-        totalHealth = 100;
+        health = 300;
+        totalHealth = 300;
 
 		base.Start ();
 	}
