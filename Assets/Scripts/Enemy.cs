@@ -9,7 +9,7 @@ public class Enemy : Player
     int moveCounter = 0;
 
 	int CHANCE_ATTACK_ICE = 5;
-	int CHANCE_ATTACK_PLAYER = 20;
+	int chanceAttackPlayer = 100;
 
 	int MOVE_THRESHOLD = 5;
     int DIST_THRESHOLD = 50;
@@ -106,6 +106,15 @@ public class Enemy : Player
             ShootFireball(1);
         }
 
+		//ramp up difficulty of AI
+		if (health < 100 && health > 50 && chanceAttackPlayer != 20) {
+			Debug.Log ("was " + chanceAttackPlayer);
+			chanceAttackPlayer = 40;
+		} else if (health <= 50 && chanceAttackPlayer != 10) {
+			Debug.Log ("was " + chanceAttackPlayer);
+			chanceAttackPlayer = 20;
+		}
+
         //slow down movements
 		if (moveCounter == MOVE_THRESHOLD) {
 			moveCounter = 0;
@@ -127,7 +136,7 @@ public class Enemy : Player
 					ShootFireball(CHANCE_ATTACK_ICE);
                     TurnAway();
                 } else {
-					ShootFireball(CHANCE_ATTACK_PLAYER);
+					ShootFireball(chanceAttackPlayer);
 					Run(playerPos);
                 }
             } else {
@@ -140,7 +149,7 @@ public class Enemy : Player
 					TurnAway();
 				} else {
                     //randomly shoot fireballs towards player since facing him
-					ShootFireball(CHANCE_ATTACK_PLAYER);
+					ShootFireball(chanceAttackPlayer);
 					animate(MagicConstant.IDLE_ANIM);
                 }
             } 

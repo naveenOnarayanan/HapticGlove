@@ -49,7 +49,7 @@ public class ExplanationControl : MonoBehaviour {
 		explanations.Add (new Explanation("Face your palm", new Vector3(-6.425037f, 7.897055f), "upwards", new Vector3(-6.437281f, 4.92359f)));
 		explanations.Add (new Explanation("Now, face your", new Vector3(-6.425037f, 7.897055f), "palm forwards", new Vector3(-6.437281f, 4.92359f)));
 		nc = NetworkController.instance();
-		nc.accelGyro();
+		//nc.accelGyro();
     }
 
 	bool ReadyForThisInstr() {
@@ -93,6 +93,7 @@ public class ExplanationControl : MonoBehaviour {
 			}
         }
 
+		/*
 		// Reset bottom motor for closed fist
 		if (counter == 2) {
 			if (ReadyForThisInstr()) {
@@ -139,5 +140,6 @@ public class ExplanationControl : MonoBehaviour {
 				UserData.accel_gyro_face_forward = UserData.accel_gyro;
 			}
 		}
+		*/
   	}
 }

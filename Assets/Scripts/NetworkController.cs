@@ -9,8 +9,7 @@ using System.Text;
 using SimpleJSON;
 
 //deals with all the calls to our servers
-public class NetworkController : MonoBehaviour
-{
+public class NetworkController {
 	private static NetworkController ncInstance;
 	Thread dataThread;
     UdpClient dataClient;
@@ -18,15 +17,17 @@ public class NetworkController : MonoBehaviour
     Socket client;
     IPEndPoint servoServer;
     IPEndPoint peltierServer;
-    IPEndPoint accelGyroServer;
+    //IPEndPoint accelGyroServer;
 
     public static string PELTIER = "peltier";
 	public static string SERVO = "servo";
-	public static string ACCEL_GYRO = "accel_gyro";
+	//public static string ACCEL_GYRO = "accel_gyro";
     
     int servoPort = 3000;
     int peltierPort = 3001;
-    int accelGyroPort = 3002;
+    //int accelGyroPort = 3002;
+
+	//TODO: configure this to be entered on first play of the game
     string IP = "10.22.78.165";
 
     Dictionary<string, IPEndPoint> serverMap;
@@ -46,7 +47,7 @@ public class NetworkController : MonoBehaviour
 
         servoServer = new IPEndPoint (IPAddress.Parse (IP), servoPort);
         peltierServer = new IPEndPoint (IPAddress.Parse (IP), peltierPort);
-        accelGyroServer = new IPEndPoint (IPAddress.Parse(IP), accelGyroPort);
+        //accelGyroServer = new IPEndPoint (IPAddress.Parse(IP), accelGyroPort);
         client = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
         try {
@@ -56,7 +57,7 @@ public class NetworkController : MonoBehaviour
             //connected = true;
             serverMap["peltier"] = peltierServer;
             serverMap["servo"] = servoServer;
-            serverMap["accel_gyro"] = accelGyroServer;
+            //serverMap["accel_gyro"] = accelGyroServer;
         } catch {
             connected = false;
         }
@@ -76,6 +77,7 @@ public class NetworkController : MonoBehaviour
 
     }
 
+	/*
     public void resetBottomServo() {
 		sendData ("\"angle\": 0, \"motor\": \"under\"", SERVO);
     }
@@ -84,6 +86,7 @@ public class NetworkController : MonoBehaviour
 		sendData ("\"angle\": 0, \"motor\": \"finger\"", SERVO);
 		sendData ("\"angle\": 0, \"motor\": \"thumb\"", SERVO);
 	}
+	*/
 
     public void pullServo() {
 		sendData ("\"angle\": 180, \"motor\": \"finger\"", SERVO);
@@ -115,12 +118,14 @@ public class NetworkController : MonoBehaviour
         sendData("\"temperature\": -15", PELTIER);
     }
 
+	/*
     public void accelGyro() {
         dataThread = new Thread(new ThreadStart(readData));
         dataThread.IsBackground = true;
         dataThread.Start();
         //sendData ("\"accel_gyro\":\"null\"", ACCEL_GYRO, true);
     }
+	*/
 
     void OnApplicationQuit() {
 		stopThread();
@@ -135,6 +140,7 @@ public class NetworkController : MonoBehaviour
         }
     }
 
+	/*
     public void readData() {
         dataClient = new UdpClient(8000);
         while (true) {
@@ -160,4 +166,5 @@ public class NetworkController : MonoBehaviour
             }
         }
     }
+    */
 }

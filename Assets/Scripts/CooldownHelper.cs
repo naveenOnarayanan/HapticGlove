@@ -21,7 +21,7 @@ public class CooldownHelper {
             cooldownCounter++;
         } else if (cooldownCounter == COOLDOWN_THRESHOLD) {
             //release fingers
-            nc.resetTopServo ();
+            //nc.resetTopServo ();
             
             Debug.Log ("Done cooldown");
             cooldownCounter = 0;

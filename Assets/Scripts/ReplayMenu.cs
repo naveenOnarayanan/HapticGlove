@@ -8,12 +8,14 @@ public class ReplayMenu : Menu
 	void Start() {
 		if (MagicConstant.LOSER == MagicConstant.PLAYER) {
 			winner = "Enemy wins!";
-		} else {
+		} else if (MagicConstant.LOSER == MagicConstant.ENEMY) {
 			winner = "You win!";
 		}
 
 		TextMesh winnerText = GameObject.Find (MagicConstant.WINNER_TEXT).GetComponent<TextMesh>();
 		winnerText.text = winner;
 	}
+
+	//TODO: also add a redo tutorial button
 }
 

@@ -7,6 +7,8 @@ public class Character : MonoBehaviour {
     //public RectTransform healthBar;
     //public Transform cameraTrans;
 
+	float boxW = 150f;
+	float boxH = 20f;
 
     const int SMALL_DMG = 25;
     const int MED_DMG = 50;
@@ -16,6 +18,23 @@ public class Character : MonoBehaviour {
         //TODO: create health bar
     }
 
+	/*
+	void OnGUI() {
+
+		Vector2 boxPosition = Camera.main.WorldToScreenPoint(transform.position);
+		Debug.Log (Screen.height + " " + Screen.width + " " + boxPosition);
+		// "Flip" it into screen coordinates
+		boxPosition.y = Screen.height - boxPosition.y;
+		
+		// Center the label over the coordinates
+		boxPosition.x -= boxW * 0.5f;
+		boxPosition.y -= boxH * 0.5f;
+		GUI.Box(new Rect(boxPosition.x, boxPosition.y, boxW, boxH), this.name);
+	}
+	*/
+
+
+	
     protected void Update() {
         //TODO: update location of health bar relative to camera
         //Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(Camera.main, cameraTrans.position);

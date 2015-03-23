@@ -23,6 +23,7 @@ public class MagicConstant {
 
 	//game object names
 	public const string PLAYER = "player";
+	public const string ENEMY = "enemy";
 	public const string WINNER_TEXT = "winnerText";
 
 	//scene names

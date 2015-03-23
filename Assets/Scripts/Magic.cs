@@ -6,7 +6,7 @@ using System.Text;
 using UnityEngine;
 
 public class Magic : MonoBehaviour {
-    static NetworkController  nc;
+    static NetworkController nc;
     CooldownHelper cd;
 
     Controller controller;
@@ -151,20 +151,18 @@ public class Magic : MonoBehaviour {
     
     // Use this for initialization
     void Start () {
-    		controller = new Controller ();
-//        if (Magic.nc == null) {
-//            Magic.nc = new NetworkController();
-//            Magic.nc.stopThread();
-//            Magic.nc.accelGyro();
-//        }
-        cd = new CooldownHelper ();
+		MagicConstant.LOSER = "";
+
+    	controller = new Controller ();
+		nc = NetworkController.instance ();
+        cd = new CooldownHelper();
 
         controller.EnableGesture (Gesture.GestureType.TYPE_CIRCLE);
   	}
   	
   	// Update is called once per frame
   	void Update () {
-        mainHand = controller.Frame ().Hands [0];
+        mainHand = controller.Frame ().Hands[0];
 
         objInLastFrame = objInCurrFrame;
         objInCurrFrame = null;
@@ -176,6 +174,9 @@ public class Magic : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.F)) {
 			objInCurrFrame = CreateObject (MagicType.Fireball);
 		}
+		if (Input.GetKeyDown(KeyCode.L)) {
+			Application.LoadLevel(MagicConstant.REPLAY_LEVEL);
+		}
         
         //Debug.Log (HandHelper.isFaceForward(mainHand, controller.Frame()) + " " + mainHand.Direction + ":" + mainHand.PalmNormal);
 
@@ -185,7 +186,7 @@ public class Magic : MonoBehaviour {
         //hand stuff
         } else if (mainHand != null && mainHand.IsValid) {
             if (HandHelper.isClosedFist(mainHand)) {
-				nc.resetBottomServo();
+				//nc.resetBottomServo();
                 canCharge = true;
             } else if (HandHelper.isFaceUp (mainHand, controller.Frame ()) && canCharge) {
                 Debug.Log (chargeCounter);
