@@ -54,10 +54,15 @@ public class ExplanationControl : MonoBehaviour {
 
         // Adding initial configuration message
 		explanations.Add(new TimedExplanation("Prepare for battle! You are about to\npartake in a magical duel...\nTO THE DEATH!!", 3));
-        explanations.Add(new TimedExplanation("Arm yourself with fireballs\nTo create a fireball, first make a fist.", 3));
+        explanations.Add(new TimedExplanation("Arm yourself with fireballs.\nTo create a fireball, first make a fist.", 3));
 		explanations.Add(new TimedExplanation("Now open your fist, palm facing up.", 3));
 		explanations.Add(new TimedExplanation("This charges the fire. The more charged,\nthe more damage it does.", 3));
 		explanations.Add(new TimedExplanation("Thrust your palm forwards to shoot it.", 3));
+		explanations.Add(new TimedExplanation("If you charge too long, you'll overload\n and be unable to cast spells\nfor a while.", 3));
+		explanations.Add(new TimedExplanation("Defend yourself with ice walls.\nHold your palm forward towards\nthe screen.", 3));
+		explanations.Add(new TimedExplanation("Now make a circular motion.", 3));
+		explanations.Add(new TimedExplanation("Keep holding your palm out to charge it.\nThe more charged the stronger\nthe wall.", 3));
+		explanations.Add(new TimedExplanation("You are now ready to fight!", 3));
 
 		explanationText.text = explanations[counter].text;
 
