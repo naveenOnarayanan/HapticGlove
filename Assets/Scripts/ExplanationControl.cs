@@ -1,14 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Leap;
 
 
 public class ExplanationControl : MonoBehaviour {
-	
-    int counter = 0;
+	int counter = 0;
     float deltaTime = 0f;
-    bool continueInstructions = true;
+    
 	private NetworkController nc;
+
 	TextMesh explanationText;
+
+	Controller controller;
+	Hand mainHand;
 	
     List<Explanation> explanations = new List<Explanation>();
 
@@ -21,7 +25,7 @@ public class ExplanationControl : MonoBehaviour {
 	abstract class Explanation {
 		public string text = "";
 
-		public abstract bool ReadyForNextInstr (float deltaTime);
+		public abstract bool ReadyForNextInstr (float deltaTime, Frame frame, Hand hand);
 	}
 
 	class TimedExplanation : Explanation {
@@ -32,9 +36,50 @@ public class ExplanationControl : MonoBehaviour {
 			this.endTime = endTime;
 		}
 
-		public override bool ReadyForNextInstr(float deltaTime) {
+		public override bool ReadyForNextInstr(float deltaTime, Frame frame, Hand hand) {
 			if (deltaTime >= endTime) {
 				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+
+	class GestureExplanation : Explanation {
+		string gestureType;
+		float thresholdTime;
+
+		public GestureExplanation(string text, string gestureType, float thresholdTime) {
+			this.text = text;
+			this.gestureType = gestureType;
+			this.thresholdTime = thresholdTime;
+		}
+
+		public override bool ReadyForNextInstr(float deltaTime, Frame frame, Hand hand) {
+			if (deltaTime >= thresholdTime) {
+				switch (gestureType) {
+					case "fist":
+						if (hand != null) {
+							return HandHelper.isClosedFist (hand);
+						} else {
+							return false;
+						}
+					case "fire":
+						return GameObject.FindGameObjectsWithTag (MagicConstant.FIRECHARGE_TAG).Length > 0;
+					case "fireball":
+						return GameObject.FindGameObjectsWithTag (MagicConstant.FIREBALL_TAG).Length > 0;
+					case "forward":
+						if (hand != null) {
+							return HandHelper.isFaceForward (hand, frame);
+						} else {
+							return false;
+						}
+					case "ice":
+						return GameObject.FindGameObjectsWithTag (MagicConstant.ICEWALL_TAG).Length > 0;
+					default:
+						Debug.Log ("unrecognized gesture");
+						return false;
+				}
 			} else {
 				return false;
 			}
@@ -45,28 +90,22 @@ public class ExplanationControl : MonoBehaviour {
         GameObject explanationTextL1 = GameObject.FindGameObjectWithTag ("ExplanationText_L1");
 		explanationText = explanationTextL1.GetComponent<TextMesh> ();
 
-		//if you charge too long, you'll overload and be unable to cast spells for a while
-		//defend yourself with ice walls
-		//hold your palm forward towards the screen <PALM FORWARD IMAGE>
-		//now make a circular motion <CIRCLE IMAGE>
-		//keep holding your palm out to charge it. the more charged the stronger the wall
-		//you are now ready to fight!
-
         // Adding initial configuration message
-		explanations.Add(new TimedExplanation("Prepare for battle! You are about to\npartake in a magical duel...\nTO THE DEATH!!", 3));
-        explanations.Add(new TimedExplanation("Arm yourself with fireballs.\nTo create a fireball, first make a fist.", 3));
-		explanations.Add(new TimedExplanation("Now open your fist, palm facing up.", 3));
-		explanations.Add(new TimedExplanation("This charges the fire. The more charged,\nthe more damage it does.", 3));
-		explanations.Add(new TimedExplanation("Thrust your palm forwards to shoot it.", 3));
-		explanations.Add(new TimedExplanation("If you charge too long, you'll overload\n and be unable to cast spells\nfor a while.", 3));
-		explanations.Add(new TimedExplanation("Defend yourself with ice walls.\nHold your palm forward towards\nthe screen.", 3));
-		explanations.Add(new TimedExplanation("Now make a circular motion.", 3));
-		explanations.Add(new TimedExplanation("Keep holding your palm out to charge it.\nThe more charged the stronger\nthe wall.", 3));
+		explanations.Add(new TimedExplanation("Prepare for battle! You are about to\npartake in a magical duel...\nTO THE DEATH!!", 5));
+        explanations.Add(new GestureExplanation("Arm yourself with fireballs.\nTo create a fireball, first make a fist.", "fist", 2));
+		explanations.Add(new GestureExplanation("Now open your fist, palm facing up.", "fire", 2));
+		explanations.Add(new TimedExplanation("This charges the fire. The more charged,\nthe more damage it does.", 5));
+		explanations.Add(new GestureExplanation("Thrust your palm forwards to shoot it.", "fireball", 2));
+		explanations.Add(new TimedExplanation("If you charge too long, you'll overload\n and be unable to cast spells\nfor a while.", 5));
+		explanations.Add(new GestureExplanation("Defend yourself with ice walls.\nHold your palm forward towards\nthe screen.", "forward", 2));
+		explanations.Add(new GestureExplanation("Now make a circular motion.", "ice", 2));
+		explanations.Add(new GestureExplanation("Keep holding your palm out to charge it.\nThe more charged the stronger\nthe wall.", "forward", 3));
 		explanations.Add(new TimedExplanation("You are now ready to fight!", 3));
 
 		explanationText.text = explanations[counter].text;
 
 		nc = NetworkController.instance();
+		controller = new Controller ();
 		//nc.accelGyro();
     }
 
@@ -74,8 +113,11 @@ public class ExplanationControl : MonoBehaviour {
   	void Update () {
 		deltaTime += Time.deltaTime;
 
+		Frame frame = controller.Frame ();
+		Hand mainHand = frame.Hands[0];
+
 		//load next explanation
-		if (explanations[counter].ReadyForNextInstr(deltaTime)) {
+		if (explanations[counter].ReadyForNextInstr(deltaTime, frame, mainHand)) {
 			counter = counter + 1;
 
 			if (counter == explanations.Count) {

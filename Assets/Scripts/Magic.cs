@@ -12,9 +12,6 @@ public class Magic : MonoBehaviour {
     Controller controller;
   	Hand mainHand;
 
-    int NETWORK_DELAY = 1;
-    float deltaTime = 5f;
-
   	int chargeCounter = 0;
     int idleCounter = 0;
 
@@ -113,7 +110,7 @@ public class Magic : MonoBehaviour {
             switch (type) {
                 case MagicType.Fireball:
                     objInCurrFrame.name = lastSize.ToString();
-                    Destroy(objInCurrFrame, 10);
+                    Destroy(objInCurrFrame, 5);
                     break;
                 case MagicType.IceWall:
                     Vector3 rotate = new Vector3(-90, 0, 0);
