@@ -9,7 +9,8 @@ public class ExplanationControl : MonoBehaviour {
     
 	private NetworkController nc;
 
-	TextMesh explanationText;
+	public TextMesh explanationText;
+	public MeshRenderer renderer;
 
 	Controller controller;
 	Hand mainHand;
@@ -22,13 +23,13 @@ public class ExplanationControl : MonoBehaviour {
 		}
 	}
 
-	abstract class Explanation {
+	public abstract class Explanation {
 		public string text = "";
 
 		public abstract bool ReadyForNextInstr (float deltaTime, Frame frame, Hand hand);
 	}
 
-	class TimedExplanation : Explanation {
+	public class TimedExplanation : Explanation {
 		float endTime = 0f;
 
 		public TimedExplanation(string text, float endTime) {
@@ -45,7 +46,7 @@ public class ExplanationControl : MonoBehaviour {
 		}
 	}
 
-	class GestureExplanation : Explanation {
+	public class GestureExplanation : Explanation {
 		string gestureType;
 		float thresholdTime;
 
@@ -59,6 +60,7 @@ public class ExplanationControl : MonoBehaviour {
 			if (deltaTime >= thresholdTime) {
 				switch (gestureType) {
 					case "fist":
+						//TODO: how access renderer? change image
 						if (hand != null) {
 							return HandHelper.isClosedFist (hand);
 						} else {
@@ -89,6 +91,7 @@ public class ExplanationControl : MonoBehaviour {
   	void Start () {
         GameObject explanationTextL1 = GameObject.FindGameObjectWithTag ("ExplanationText_L1");
 		explanationText = explanationTextL1.GetComponent<TextMesh> ();
+		renderer = GameObject.FindGameObjectWithTag ("Image").GetComponent<MeshRenderer>();
 
         // Adding initial configuration message
 		explanations.Add(new TimedExplanation("Prepare for battle! You are about to\npartake in a magical duel...\nTO THE DEATH!!", 5));
