@@ -61,21 +61,14 @@ public class ExplanationControl : MonoBehaviour {
 				switch (gestureType) {
 					case "fist":
 						//TODO: how access renderer? change image
-						if (hand != null) {
-							return HandHelper.isClosedFist (hand);
-						} else {
-							return false;
-						}
+
+						return HandHelper.isClosedFist (hand);
 					case "fire":
 						return GameObject.FindGameObjectsWithTag (MagicConstant.FIRECHARGE_TAG).Length > 0;
 					case "fireball":
 						return GameObject.FindGameObjectsWithTag (MagicConstant.FIREBALL_TAG).Length > 0;
 					case "forward":
-						if (hand != null) {
-							return HandHelper.isFaceForward (hand, frame);
-						} else {
-							return false;
-						}
+						return HandHelper.isFaceForward (hand, frame);
 					case "ice":
 						return GameObject.FindGameObjectsWithTag (MagicConstant.ICEWALL_TAG).Length > 0;
 					default:

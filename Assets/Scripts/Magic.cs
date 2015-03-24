@@ -171,8 +171,11 @@ public class Magic : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.F)) {
 			objInCurrFrame = CreateObject (MagicType.Fireball);
 		}
-		if (Input.GetKeyDown(KeyCode.L)) {
-			Application.LoadLevel(MagicConstant.REPLAY_LEVEL);
+		if (Input.GetKeyDown(KeyCode.T)) {
+			Application.LoadLevel(MagicConstant.TUTORIAL_LEVEL);
+		}
+		if (Input.GetKeyDown(KeyCode.G)) {
+			Application.LoadLevel(MagicConstant.GAME_LEVEL);
 		}
         
         //Debug.Log (HandHelper.isFaceForward(mainHand, controller.Frame()) + " " + mainHand.Direction + ":" + mainHand.PalmNormal);
@@ -181,7 +184,7 @@ public class Magic : MonoBehaviour {
         if (cd.coolingDown (nc)) {
             neutralize ();
         //hand stuff
-        } else if (mainHand != null && mainHand.IsValid) {
+        } else if (HandHelper.isValidHand(mainHand)) {
             if (HandHelper.isClosedFist(mainHand)) {
 				//nc.resetBottomServo();
                 canCharge = true;

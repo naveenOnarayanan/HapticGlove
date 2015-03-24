@@ -5,6 +5,10 @@ using Leap;
 
 //helper methods for doing magic stuffs
 public static class HandHelper {
+	public static bool isValidHand(Hand hand) {
+		return hand != null && hand.IsValid;
+	}
+
     public static bool isFaceUp(Hand hand, Frame frame) {
 		/*
         Pointable finger;
@@ -17,17 +21,25 @@ public static class HandHelper {
         }
         */
         
-		bool fromLeap = hand.Direction.y > 0.5 && hand.PalmNormal.y < 0 && hand.PalmNormal.z < 0;// && fingerFlat;
-		//bool fromSensors = UserData.isFaceUp();
+		if (isValidHand (hand)) {
+			bool fromLeap = hand.Direction.y > 0.5 && hand.PalmNormal.y < 0 && hand.PalmNormal.z < 0;// && fingerFlat;
+			//bool fromSensors = UserData.isFaceUp();
 
-		return fromLeap;// || fromSensors;
+			return fromLeap; // || fromSensors;
+		} else {
+			return false;
+		}
     }
 
     public static bool isFaceForward(Hand hand, Frame frame) {
-		bool fromLeap = hand.PalmNormal.y > 0.8 && hand.PalmNormal.z > -0.2 && hand.PalmNormal.z < 0.5;
-		//bool fromSensors = UserData.isFaceForward();
-		
-		return fromLeap;// || fromSensors;
+		if (isValidHand (hand)) {
+			bool fromLeap = hand.PalmNormal.y > 0.8 && hand.PalmNormal.z > -0.2 && hand.PalmNormal.z < 0.5;
+			//bool fromSensors = UserData.isFaceForward();
+			
+			return fromLeap;// || fromSensors;
+		} else {
+			return false;
+		}
     }
 
     static int getExtendedFingers(Hand hand) {
@@ -43,9 +55,13 @@ public static class HandHelper {
     }
 
     public static bool isClosedFist(Hand hand) {
-		bool fromLeap = getExtendedFingers(hand) == 0;
-		//bool fromSensors = UserData.isClosedFist();
-		
-		return fromLeap;// || fromSensors;
+		if (isValidHand (hand)) {
+			bool fromLeap = getExtendedFingers(hand) <= 1;
+			//bool fromSensors = UserData.isClosedFist();
+			
+			return fromLeap;// || fromSensors;
+		} else {
+			return false;
+		}
     }
 }

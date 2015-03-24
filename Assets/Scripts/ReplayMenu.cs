@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class ReplayMenu : MonoBehaviour
+public class ReplayMenu : Menu
 {
 	string winner;
 
@@ -14,17 +14,6 @@ public class ReplayMenu : MonoBehaviour
 
 		TextMesh winnerText = GameObject.Find (MagicConstant.WINNER_TEXT).GetComponent<TextMesh>();
 		winnerText.text = winner;
-	}
-
-	void OnParticleCollision(GameObject gameObj) {
-		if (gameObj.tag == MagicConstant.FIREBALL_TAG) {
-			if (gameObj.transform.position.x > 0) {
-				Application.LoadLevel(MagicConstant.TUTORIAL_LEVEL);
-			} else {
-				Application.LoadLevel(MagicConstant.GAME_LEVEL);
-
-			}
-		}
 	}
 }
 
