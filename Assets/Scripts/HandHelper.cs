@@ -56,7 +56,7 @@ public static class HandHelper {
 
     public static bool isClosedFist(Hand hand) {
 		if (isValidHand (hand)) {
-			bool fromLeap = getExtendedFingers(hand) <= 1;
+			bool fromLeap = getExtendedFingers(hand) == 0;
 			//bool fromSensors = UserData.isClosedFist();
 			
 			return fromLeap;// || fromSensors;

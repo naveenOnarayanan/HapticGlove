@@ -25,6 +25,7 @@ public class ExplanationControl : MonoBehaviour {
 
 	public abstract class Explanation {
 		public string text = "";
+		public Renderer renderer;
 
 		public abstract bool ReadyForNextInstr (float deltaTime, Frame frame, Hand hand);
 	}
@@ -32,12 +33,21 @@ public class ExplanationControl : MonoBehaviour {
 	public class TimedExplanation : Explanation {
 		float endTime = 0f;
 
-		public TimedExplanation(string text, float endTime) {
+		public TimedExplanation(string text, float endTime, Renderer renderer) {
 			this.text = text;
+			this.renderer = renderer;
 			this.endTime = endTime;
 		}
 
 		public override bool ReadyForNextInstr(float deltaTime, Frame frame, Hand hand) {
+			Texture texture;
+
+			//do this only at start of new instruction
+			if (deltaTime < 0.5f) {
+				texture = Resources.Load ("Images/transparent") as Texture;
+				renderer.material.mainTexture = texture;
+			}
+
 			if (deltaTime >= endTime) {
 				return true;
 			} else {
@@ -49,7 +59,6 @@ public class ExplanationControl : MonoBehaviour {
 	public class GestureExplanation : Explanation {
 		string gestureType;
 		float thresholdTime;
-		Renderer renderer;
 
 		public GestureExplanation(string text, string gestureType, float thresholdTime, Renderer renderer) {
 			this.text = text;
@@ -93,6 +102,7 @@ public class ExplanationControl : MonoBehaviour {
 			if (deltaTime >= thresholdTime) {
 				switch (gestureType) {
 					case "fist":
+						Debug.Log (HandHelper.isClosedFist(hand));
 						return HandHelper.isClosedFist (hand);
 					case "fire":
 						return GameObject.FindGameObjectsWithTag (MagicConstant.FIRECHARGE_TAG).Length > 0;
@@ -118,16 +128,16 @@ public class ExplanationControl : MonoBehaviour {
 		renderer = GameObject.FindGameObjectWithTag ("Image").renderer;
 
         // Adding initial configuration message
-		explanations.Add(new TimedExplanation("Prepare for battle! You are about to\npartake in a magical duel...\nTO THE DEATH!!", 1));
+		explanations.Add(new TimedExplanation("Prepare for battle! You are about to\npartake in a magical duel...\nTO THE DEATH!!", 5, renderer));
         explanations.Add(new GestureExplanation("Arm yourself with fireballs.\nTo create a fireball, first make a fist.", "fist", 2, renderer));
 		explanations.Add(new GestureExplanation("Now open your fist, palm facing up.", "fire", 2, renderer));
-		explanations.Add(new TimedExplanation("This charges the fire. The more charged,\nthe more damage it does.", 5));
-		explanations.Add(new GestureExplanation("Thrust your palm forwards to shoot it.", "fireball", 2, renderer));
-		explanations.Add(new TimedExplanation("If you charge too long, you'll overload\n and be unable to cast spells\nfor a while.", 5));
+		explanations.Add(new TimedExplanation("This charges the fire. The more charged,\nthe more damage it does.", 5, renderer));
+		explanations.Add(new GestureExplanation("When you have a charge going,\nthrust your palm forwards to shoot it.", "fireball", 2, renderer));
+		explanations.Add(new TimedExplanation("If you charge too long, you'll overload\n and be unable to cast spells\nfor a while.", 5, renderer));
 		explanations.Add(new GestureExplanation("Defend yourself with ice walls.\nHold your palm forward towards\nthe screen.", "forward", 2, renderer));
 		explanations.Add(new GestureExplanation("Now make a circular motion.", "ice", 2, renderer));
 		explanations.Add(new GestureExplanation("Keep holding your palm out to charge it.\nThe more charged the stronger\nthe wall.", "forward", 3, renderer));
-		explanations.Add(new TimedExplanation("You are now ready to fight!", 3));
+		explanations.Add(new TimedExplanation("You now have all the skills you'll need\nGet ready to fight!", 3, renderer));
 
 		explanationText.text = explanations[counter].text;
 
