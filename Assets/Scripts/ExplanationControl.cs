@@ -10,7 +10,7 @@ public class ExplanationControl : MonoBehaviour {
 	private NetworkController nc;
 
 	public TextMesh explanationText;
-	public MeshRenderer renderer;
+	public Renderer renderer;
 
 	Controller controller;
 	Hand mainHand;
@@ -49,19 +49,50 @@ public class ExplanationControl : MonoBehaviour {
 	public class GestureExplanation : Explanation {
 		string gestureType;
 		float thresholdTime;
+		Renderer renderer;
 
-		public GestureExplanation(string text, string gestureType, float thresholdTime) {
+		public GestureExplanation(string text, string gestureType, float thresholdTime, Renderer renderer) {
 			this.text = text;
 			this.gestureType = gestureType;
 			this.thresholdTime = thresholdTime;
+			this.renderer = renderer;
 		}
 
 		public override bool ReadyForNextInstr(float deltaTime, Frame frame, Hand hand) {
+			Texture texture;
+
+			//do this only at start of new instruction
+			if (deltaTime < 0.5f) {
+				switch (gestureType) {
+					case "fist":
+						texture = Resources.Load("Images/fist-close") as Texture;
+						renderer.material.mainTexture = texture;
+						break;
+					case "fire":
+						texture = Resources.Load("Images/fist-open") as Texture;
+						renderer.material.mainTexture = texture;
+						break;
+					case "fireball":
+						texture = Resources.Load("Images/open-shoot") as Texture;
+						renderer.material.mainTexture = texture;
+						break;
+					case "forward":
+						texture = Resources.Load("Images/hand-open") as Texture;
+						renderer.material.mainTexture = texture;
+						break;
+					case "ice":
+						texture = Resources.Load("Images/spin-hand") as Texture;
+						renderer.material.mainTexture = texture;
+						break;
+					default:
+						Debug.Log ("unrecognized gesture");
+						break;
+				}
+			}
+			
 			if (deltaTime >= thresholdTime) {
 				switch (gestureType) {
 					case "fist":
-						//TODO: how access renderer? change image
-
 						return HandHelper.isClosedFist (hand);
 					case "fire":
 						return GameObject.FindGameObjectsWithTag (MagicConstant.FIRECHARGE_TAG).Length > 0;
@@ -84,18 +115,18 @@ public class ExplanationControl : MonoBehaviour {
   	void Start () {
         GameObject explanationTextL1 = GameObject.FindGameObjectWithTag ("ExplanationText_L1");
 		explanationText = explanationTextL1.GetComponent<TextMesh> ();
-		renderer = GameObject.FindGameObjectWithTag ("Image").GetComponent<MeshRenderer>();
+		renderer = GameObject.FindGameObjectWithTag ("Image").renderer;
 
         // Adding initial configuration message
-		explanations.Add(new TimedExplanation("Prepare for battle! You are about to\npartake in a magical duel...\nTO THE DEATH!!", 5));
-        explanations.Add(new GestureExplanation("Arm yourself with fireballs.\nTo create a fireball, first make a fist.", "fist", 2));
-		explanations.Add(new GestureExplanation("Now open your fist, palm facing up.", "fire", 2));
+		explanations.Add(new TimedExplanation("Prepare for battle! You are about to\npartake in a magical duel...\nTO THE DEATH!!", 1));
+        explanations.Add(new GestureExplanation("Arm yourself with fireballs.\nTo create a fireball, first make a fist.", "fist", 2, renderer));
+		explanations.Add(new GestureExplanation("Now open your fist, palm facing up.", "fire", 2, renderer));
 		explanations.Add(new TimedExplanation("This charges the fire. The more charged,\nthe more damage it does.", 5));
-		explanations.Add(new GestureExplanation("Thrust your palm forwards to shoot it.", "fireball", 2));
+		explanations.Add(new GestureExplanation("Thrust your palm forwards to shoot it.", "fireball", 2, renderer));
 		explanations.Add(new TimedExplanation("If you charge too long, you'll overload\n and be unable to cast spells\nfor a while.", 5));
-		explanations.Add(new GestureExplanation("Defend yourself with ice walls.\nHold your palm forward towards\nthe screen.", "forward", 2));
-		explanations.Add(new GestureExplanation("Now make a circular motion.", "ice", 2));
-		explanations.Add(new GestureExplanation("Keep holding your palm out to charge it.\nThe more charged the stronger\nthe wall.", "forward", 3));
+		explanations.Add(new GestureExplanation("Defend yourself with ice walls.\nHold your palm forward towards\nthe screen.", "forward", 2, renderer));
+		explanations.Add(new GestureExplanation("Now make a circular motion.", "ice", 2, renderer));
+		explanations.Add(new GestureExplanation("Keep holding your palm out to charge it.\nThe more charged the stronger\nthe wall.", "forward", 3, renderer));
 		explanations.Add(new TimedExplanation("You are now ready to fight!", 3));
 
 		explanationText.text = explanations[counter].text;
