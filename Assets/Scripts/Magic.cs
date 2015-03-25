@@ -13,6 +13,7 @@ public class Magic : MonoBehaviour {
   	Hand mainHand;
 
   	int chargeCounter = 0;
+	int iceCounter = 0;
     int idleCounter = 0;
 
     int MIN_THRESHOLD = 5;
@@ -23,6 +24,11 @@ public class Magic : MonoBehaviour {
     int IDLE_THRESHOLD = 50;
 
     int CLOSEST_ICEWALL_DIST = 3;
+	int ICE_THRESHOLD = 100;
+
+	float TURN_DIST = 2f;
+
+	GameObject player;
 
     GameObject objInCurrFrame;
     GameObject objInLastFrame;
@@ -30,6 +36,7 @@ public class Magic : MonoBehaviour {
     Size lastSize = Size.Small;
 
     bool canCharge = false;
+	bool canIce = false;
 
   	public enum MagicType {
   		FireCharge,
@@ -131,8 +138,10 @@ public class Magic : MonoBehaviour {
         ClearFirecharges();
 
         chargeCounter = 0;
+		iceCounter = 0;
         idleCounter = 0;
         canCharge = false;
+		canIce = false;
 
         //nc.resetPeltier();
     }
@@ -154,7 +163,7 @@ public class Magic : MonoBehaviour {
 		nc = NetworkController.instance ();
         cd = new CooldownHelper();
 
-        controller.EnableGesture (Gesture.GestureType.TYPE_CIRCLE);
+		player = GameObject.Find (MagicConstant.PLAYER);
   	}
   	
   	// Update is called once per frame
@@ -176,6 +185,14 @@ public class Magic : MonoBehaviour {
 		}
 		if (Input.GetKeyDown(KeyCode.G)) {
 			Application.LoadLevel(MagicConstant.GAME_LEVEL);
+		}
+		if (Input.GetKey(KeyCode.J) || Input.GetKey(KeyCode.Q)) {
+			player.transform.Rotate(new Vector3(0, -TURN_DIST, 0));
+			//pivot left
+		}
+		if (Input.GetKey(KeyCode.K) || Input.GetKey(KeyCode.E)) {
+			//pivot right
+			player.transform.Rotate(new Vector3(0, TURN_DIST, 0));
 		}
         
         //Debug.Log (HandHelper.isFaceForward(mainHand, controller.Frame()) + " " + mainHand.Direction + ":" + mainHand.PalmNormal);
@@ -229,14 +246,17 @@ public class Magic : MonoBehaviour {
                     }
                 }
 
+
+
                 //create an ice wall if there isn't a nearby one and a circle gesture was performed
                 if (!collided && GameObject.FindWithTag(MagicConstant.FIREBALL_TAG) == null) {
-                    foreach (Gesture gesture in controller.Frame().Gestures(controller.Frame(10))) {
-                        if (gesture.Type == Gesture.GestureType.TYPE_CIRCLE) {
-                            objInCurrFrame = CreateObject(MagicType.IceWall);
-                            break;
-                        }
-                    }
+					iceCounter++;
+
+					if (iceCounter > ICE_THRESHOLD) {
+						objInCurrFrame = CreateObject(MagicType.IceWall);
+						canIce = false;
+						iceCounter = 0;
+					}
                 }
 
             } else {

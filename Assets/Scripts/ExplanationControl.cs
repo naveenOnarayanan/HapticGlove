@@ -102,12 +102,12 @@ public class ExplanationControl : MonoBehaviour {
 			if (deltaTime >= thresholdTime) {
 				switch (gestureType) {
 					case "fist":
-						Debug.Log (HandHelper.isClosedFist(hand));
 						return HandHelper.isClosedFist (hand);
 					case "fire":
 						return GameObject.FindGameObjectsWithTag (MagicConstant.FIRECHARGE_TAG).Length > 0;
 					case "fireball":
-						return GameObject.FindGameObjectsWithTag (MagicConstant.FIREBALL_TAG).Length > 0;
+						//shoot two before continuing
+						return GameObject.FindGameObjectsWithTag (MagicConstant.FIREBALL_TAG).Length > 1;
 					case "forward":
 						return HandHelper.isFaceForward (hand, frame);
 					case "ice":
@@ -132,11 +132,11 @@ public class ExplanationControl : MonoBehaviour {
         explanations.Add(new GestureExplanation("Arm yourself with fireballs.\nTo create a fireball, first make a fist.", "fist", 2, renderer));
 		explanations.Add(new GestureExplanation("Now open your fist, palm facing up.", "fire", 2, renderer));
 		explanations.Add(new TimedExplanation("This charges the fire. The more charged,\nthe more damage it does.", 5, renderer));
-		explanations.Add(new GestureExplanation("When you have a charge going,\nthrust your palm forwards to shoot it.", "fireball", 2, renderer));
 		explanations.Add(new TimedExplanation("If you charge too long, you'll overload\n and be unable to cast spells\nfor a while.", 5, renderer));
-		explanations.Add(new GestureExplanation("Defend yourself with ice walls.\nHold your palm forward towards\nthe screen.", "forward", 2, renderer));
-		explanations.Add(new GestureExplanation("Now make a circular motion.", "ice", 2, renderer));
-		explanations.Add(new GestureExplanation("Keep holding your palm out to charge it.\nThe more charged the stronger\nthe wall.", "forward", 3, renderer));
+		explanations.Add(new GestureExplanation("Charge again, and when you have a fire\nin your hand, thrust your palm\n forwards to shoot it.", "fireball", 3, renderer));
+		explanations.Add(new TimedExplanation("Good job! You are ready to hurt enemies\n with fire. Now to defend yourself.", 3, renderer));
+		explanations.Add(new GestureExplanation("Create an ice wall. Put your palm\ntowards the screen and hold it.", "forward", 3, renderer));
+		explanations.Add(new GestureExplanation("Keep holding your palm out to charge\nit. The more charged the stronger\nthe wall.", "forward", 3, renderer));
 		explanations.Add(new TimedExplanation("You now have all the skills you'll need\nGet ready to fight!", 3, renderer));
 
 		explanationText.text = explanations[counter].text;
@@ -146,6 +146,11 @@ public class ExplanationControl : MonoBehaviour {
 		//nc.accelGyro();
     }
 
+	void SetText() {
+		explanationText.text = explanations[counter].text;
+		deltaTime = 0;
+	}
+
   	// Update is called once per frame
   	void Update () {
 		deltaTime += Time.deltaTime;
@@ -153,6 +158,20 @@ public class ExplanationControl : MonoBehaviour {
 		Frame frame = controller.Frame ();
 		Hand mainHand = frame.Hands[0];
 
+		if (Input.GetKeyDown(KeyCode.N)) {
+			counter = counter + 1;
+
+			if (counter == explanations.Count) {
+				Application.LoadLevel(Application.loadedLevel + 1);
+			} else {
+				SetText ();
+			}
+		}
+		if (Input.GetKeyDown(KeyCode.P)) {
+			counter = counter - 1;
+			SetText ();
+		}
+		
 		//load next explanation
 		if (explanations[counter].ReadyForNextInstr(deltaTime, frame, mainHand)) {
 			counter = counter + 1;
@@ -160,8 +179,7 @@ public class ExplanationControl : MonoBehaviour {
 			if (counter == explanations.Count) {
 				Application.LoadLevel(Application.loadedLevel + 1);
 			} else {
-				explanationText.text = explanations[counter].text;
-				deltaTime = 0;
+				SetText ();
 			}
         }
   	}

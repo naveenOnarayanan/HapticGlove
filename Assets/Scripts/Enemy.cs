@@ -10,9 +10,9 @@ public class Enemy : Player
 
 	int STARTING_HEALTH = 100;
 
-	int CHANCE_ATTACK_ICE = 5;
-	int EASY_CHANCE_ATTACK = 100;
-	int MED_CHANCE_ATTACK = 40;
+	int CHANCE_ATTACK_ICE = 20;
+	int EASY_CHANCE_ATTACK = 1000;
+	int MED_CHANCE_ATTACK = 50;
 	int HARD_CHANCE_ATTACK = 20;
 
 	int chanceAttackPlayer;
@@ -112,7 +112,7 @@ public class Enemy : Player
         moveCounter++;
 
         //testing purposes
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.O))
         {
             ShootFireball(1);
         }
